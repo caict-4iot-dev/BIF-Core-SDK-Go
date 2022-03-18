@@ -1,0 +1,92 @@
+syntax = "proto3";
+package protocol;
+option go_package = "../proto";
+
+message KeyPair{
+	string key = 1;
+	string value = 2;
+	int64 version = 3;
+}
+
+message Signature {
+	string public_key = 1;
+	bytes sign_data = 2;
+}
+
+message LedgerUpgrade{
+	int64 new_ledger_version = 1; //will be processed as required at verion 2.1.0.0
+	repeated string new_validator_list = 2; //for hardfork
+	string chain_code = 3;
+}
+
+message WsMessage {
+	int64 type = 1; //1: ping
+	bool request = 2; //true :request , false:reponse
+	int64 sequence = 3;
+	bytes data = 4;
+}
+
+//for ping messsage
+message Ping {
+    int64 nonce = 1;
+}
+
+//for pong message
+message Pong {
+    int64 nonce = 1;
+}
+
+enum ERRORCODE
+{
+	ERRCODE_SUCCESS							= 0;
+	ERRCODE_INTERNAL_ERROR					= 1;
+	ERRCODE_INVALID_PARAMETER				= 2;
+	ERRCODE_ALREADY_EXIST					= 3;
+	ERRCODE_NOT_EXIST						= 4;
+	ERRCODE_TX_TIMEOUT						= 5;
+	ERRCODE_ACCESS_DENIED				    = 6;
+	ERRCODE_MATH_OVERFLOW				    = 7;
+	
+	ERRCODE_EXPR_CONDITION_RESULT_FALSE    = 20;
+	ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    = 21;
+
+	ERRCODE_INVALID_PUBKEY					= 90;// UNUSED
+	ERRCODE_INVALID_PRIKEY					= 91;
+	ERRCODE_ASSET_INVALID					= 92;
+	ERRCODE_INVALID_SIGNATURE				= 93;
+	ERRCODE_INVALID_ADDRESS					= 94;
+	ERRCODE_MISSING_OPERATIONS				= 97;
+	ERRCODE_TOO_MANY_OPERATIONS              = 98;
+	
+	ERRCODE_BAD_SEQUENCE					= 99;
+	ERRCODE_ACCOUNT_LOW_RESERVE				= 100;   //BUCHAIN LOW RESERVE
+	ERRCODE_ACCOUNT_SOURCEDEST_EQUAL		= 101;
+	ERRCODE_ACCOUNT_DEST_EXIST				= 102;
+	ERRCODE_ACCOUNT_NOT_EXIST				= 103;
+	ERRCODE_ACCOUNT_ASSET_LOW_RESERVE		= 104;   //IOU LOW RESERVE
+	ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE	= 105;
+	ERRCODE_ACCOUNT_INIT_LOW_RESERVE = 106;
+
+	ERRCODE_FEE_NOT_ENOUGH					= 111;
+	ERRCODE_FEE_INVALID    					= 112;
+	ERRCODE_OUT_OF_TXCACHE					= 114;
+
+	ERRCODE_WEIGHT_NOT_VALID				= 120;
+	ERRCODE_THRESHOLD_NOT_VALID				= 121;
+	
+
+	ERRCODE_INVALID_DATAVERSION				= 144;	//metadata version error
+	ERRCODE_TX_SIZE_TOO_BIG = 146;
+	
+
+	ERRCODE_CONTRACT_EXECUTE_FAIL			= 151;
+	ERRCODE_CONTRACT_SYNTAX_ERROR			= 152;
+	ERRCODE_CONTRACT_TOO_MANY_RECURSION		= 153;
+	ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS	= 154;
+	ERRCODE_CONTRACT_EXECUTE_EXPIRED		= 155;
+	ERRCODE_INVALID_CONTRACT				= 156;
+	ERRCODE_INVALID_CONTRACTVERSION			= 157;	//contract version error
+	
+
+	ERRCODE_TX_INSERT_QUEUE_FAIL			= 160;
+};

@@ -1,0 +1,291 @@
+syntax = "proto3";
+package protocol;
+option go_package = "../proto";
+
+import "common.proto";
+
+message Account{
+	string address = 1;
+	int64  nonce = 2; //Last transaction seq
+	AccountPrivilege priv = 3;
+	bytes metadatas_hash = 4;	//metadatas_hash = merklehash(metadatas);
+	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
+	Contract contract = 6;
+	int64 balance = 7;
+	ControlledArea controlled_area = 8;
+	string public_key = 9;
+}
+
+message ControlledArea{
+	enum TRUST_FLAG {
+		UNCERT        = 0;
+		TRUSTED       = 1;
+		UNTRUSTED     = 2;
+	};
+	
+	enum STATUS_FALG {
+		ENABLED        = 0;
+		DISABLED       = 1;
+	};
+	
+    TRUST_FLAG trusted = 1;
+	STATUS_FALG status = 2;
+	repeated KeyPair attributes = 3 ;
+}
+
+
+
+message LedgerHeader
+{
+	int64	seq 		            = 1;
+	bytes	hash 					= 2;
+	bytes	previous_hash 			= 3;
+	bytes	account_tree_hash		= 4;
+	int64   close_time 				= 5;
+	bytes   consensus_value_hash    = 6;
+	int64	version 			    = 7;
+	int64	tx_count 				= 8;
+	bytes   validators_hash = 9;	// hash
+	string	reserve = 10;
+	bytes	fees_hash = 11;
+	int64	chain_id = 12;
+}
+
+message Ledger{
+	LedgerHeader header = 1;
+    repeated TransactionEnv transaction_envs = 2;
+}
+
+
+
+message OperationTypeThreshold{
+	Operation.Type type = 1;
+	int64 threshold = 2;
+}
+
+message AccountPrivilege {
+	int64 master_weight = 1;
+	repeated Signer signers = 2;
+	AccountThreshold thresholds = 3;
+}
+
+message AccountThreshold{
+	int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicates no setting
+	repeated OperationTypeThreshold type_thresholds = 2;
+}
+
+
+
+message OperationPayCoin{
+	string dest_address = 1;
+	int64 amount = 2;
+	string input = 3;
+	bytes raw_dest_address = 4;
+}
+
+message OperationSetSignerWeight{
+	int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicates no setting
+	repeated Signer signers = 2; //address:weight, if weight is 0, it indicates deleting this signer
+}
+
+message OperationLog{
+	string topic = 1;
+	repeated string datas = 2;
+}
+
+message OperationSetPrivilege{
+	string master_weight = 1;
+	repeated Signer signers = 2;
+	string tx_threshold = 3;
+	repeated OperationTypeThreshold type_thresholds = 4;
+}
+
+message Operation {
+	enum Type {
+		UNKNOWN = 0;
+		CREATE_ACCOUNT 			= 1;
+		
+		SET_METADATA			= 4;
+		SET_SIGNER_WEIGHT		= 5;
+		SET_THRESHOLD			= 6;
+		PAY_COIN                = 7;
+		LOG						= 8;
+		SET_PRIVILEGE			= 9;
+		UPGRADE_CONTRACT		= 10;
+		SET_CONTROLLED_AREA     = 11;
+		CREATE_PRIVATE_CONTRACT = 12;
+		CALL_PRIVATE_CONTRACT	= 13;
+	};
+	Type type = 1;
+	string source_address = 2;
+	bytes metadata	= 3;
+
+	//
+	OperationCreateAccount		create_account 	   = 4;
+	
+	OperationSetMetadata		set_metadata	   = 7;
+	OperationSetSignerWeight	set_signer_weight  = 8;
+	OperationSetThreshold		set_threshold 	   = 9;
+	OperationPayCoin			pay_coin           = 10;
+	OperationLog				log				   = 11;
+	OperationSetPrivilege		set_privilege	   = 12;
+	OperationUpgradeContract	upgrade_contract   = 13;
+	OperationSetControlledArea	set_controlled_area   = 14;
+	OperationCreatePrivateContract create_private_contract = 15;
+	OperationCallPrivateContract call_private_contract = 16;
+	bytes raw_source_address = 20;
+}
+
+message OperationSetThreshold{
+	int64 tx_threshold = 1;
+	repeated OperationTypeThreshold type_thresholds = 4; //type:threshold, threshold:0 indicates deleting this type
+}
+
+message Transaction {
+	enum Limit{
+		UNKNOWN = 0;
+		OPERATIONS = 1000;
+	};
+	string source_address = 1;
+	int64 nonce = 2;
+	string expr_condition = 3;
+	repeated Operation operations = 4;
+	bytes metadata = 5;
+	int64  fee_limit = 6;
+	int64  gas_price =7;
+	int64 ceil_ledger_seq = 8;
+	int64 chain_id = 9;
+	string address_prefix = 10; //it represent the address is raw
+	bytes raw_source_address = 11;
+}
+
+message Signer {
+	enum Limit{
+		SIGNER_NONE = 0;
+		SIGNER = 100;
+	};
+	string address = 1;
+	int64 weight = 2;
+}
+
+message Trigger{
+	enum TransactionType{
+		NORMAL_TRANSACTION	 = 0;
+		CONTRACT_TRANSACTION = 1;
+	};
+
+	message OperationTrigger{
+		bytes hash = 1;
+		int64 index = 2;
+	}
+	TransactionType transaction_type = 1;
+	int64 ledger_seq = 2;  //If it is triggered by a specific block (temporarily not provided)
+	OperationTrigger transaction = 3;  //If it's a transaction triggered
+	
+}
+
+enum Limit{
+	UNKNOWN = 0;
+	SIGNATURE = 100;
+};
+
+message TransactionEnv {
+	Transaction transaction = 1;
+	repeated Signature signatures 	= 2;
+	Trigger trigger = 3;
+}
+
+message TransactionEnvStore {
+	TransactionEnv transaction_env = 1;
+	int32 error_code = 2;
+	string error_desc = 3;
+	int64 ledger_seq = 4;
+	int64 close_time = 5;
+	//for notify
+	bytes hash = 6;
+	int64 actual_fee = 7;
+	repeated bytes contract_tx_hashes = 8;
+}
+
+message TransactionEnvSet{
+	repeated TransactionEnv txs = 2;
+}
+
+message ConsensusValueValidation {
+	repeated int32 expire_tx_ids = 1;  //Contract execution expired
+	repeated int32 error_tx_ids = 2;
+	//May contain other checks
+	int32 succ_tx_count = 3;
+}
+
+message ConsensusValue{
+	TransactionEnvSet txset = 1;
+	int64 close_time = 2;
+	bytes previous_proof = 3;
+	int64 ledger_seq = 4;
+	bytes previous_ledger_hash = 5;
+	LedgerUpgrade ledger_upgrade = 6;
+	ConsensusValueValidation validation = 7;
+	bytes txs = 8;
+	bytes txhash = 9;
+}
+
+message Contract{
+    enum ContractType{
+		JAVASCRIPT = 0;
+		EVM = 1;
+		SYSTEM = 2;
+	}
+	ContractType type = 1;
+	string payload = 2;
+	int64 version = 3;
+}
+
+message OperationCreateAccount{
+	string dest_address = 1;
+	Contract contract = 2;
+	AccountPrivilege priv = 3;
+	repeated KeyPair metadatas = 4;	
+	int64	init_balance = 5;
+	string  init_input = 6;
+	string dest_public_key = 7;
+	bytes raw_dest_address = 8;
+}
+
+message OperationSetMetadata{
+	string	key = 1;  
+	string  value = 2;
+	int64 	version = 3; //Optional. The version number of metadata. If set, it must be the same as the existing metadata_version of the account.
+	bool    delete_flag = 4;
+}
+
+message OperationUpgradeContract {
+	string dest_address = 1;
+	string payload = 2;
+	int64  type = 3;
+}
+
+message OperationSetControlledArea {
+	string dest_address = 1;
+	bool s_trusted = 2;
+	bool s_status = 3;
+    ControlledArea.TRUST_FLAG trusted = 4;
+	ControlledArea.STATUS_FALG status = 5;
+	repeated KeyPair attributes = 6; 
+}
+
+message OperationCreatePrivateContract {
+	Contract contract	= 1;
+	string  init_input = 2;
+}
+
+message OperationCallPrivateContract {
+	string dest_address	= 1;
+	string  input		= 2;
+}
+
+message PrivateContractAccount{
+	string address = 1;
+	bytes metadatas_hash = 2;	//metadatas_hash = merklehash(metadatas);
+	Contract contract = 3;
+}

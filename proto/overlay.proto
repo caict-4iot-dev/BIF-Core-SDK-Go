@@ -1,0 +1,191 @@
+syntax = "proto3";
+package protocol;
+option go_package = "../proto";
+
+import "common.proto";
+import "chain.proto";
+
+enum OVERLAY_MESSAGE_TYPE{
+	OVERLAY_MSGTYPE_NONE = 0;
+	OVERLAY_MSGTYPE_PING  = 1;
+	OVERLAY_MSGTYPE_HELLO = 2;
+	OVERLAY_MSGTYPE_PEERS = 3;
+	OVERLAY_MSGTYPE_TRANSACTION = 4;
+	OVERLAY_MSGTYPE_LEDGERS = 5;
+	OVERLAY_MSGTYPE_PBFT = 6;
+	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //Broadcast the ledger upgrade status
+}
+
+message Hello {
+    int64 network_id = 1;
+    int64 ledger_version = 2;
+    int64 overlay_version = 3;
+    string chain_version = 4;
+    int64 listening_port = 5;
+    string node_address = 6;
+    string node_rand = 7;
+    string license = 8;
+}
+
+message HelloResponse {
+	 ERRORCODE error_code = 1;
+	 string error_desc = 2;
+}
+
+//for peers message
+message Peer {
+		string ip = 1;
+		int64 port = 2;
+		int64 num_failures = 3;
+		int64 next_attempt_time = 4;
+		int64 active_time = 5;
+		int64 connection_id = 6;
+}
+
+message Peers {
+    repeated Peer peers = 1;
+}
+
+//for getledgers
+message GetLedgers
+{
+	int64 begin = 1;
+	int64 end   = 2;
+	int64 timestamp  = 3;
+	int64 chain_id = 4;
+}
+
+
+//for ledgers
+message Ledgers
+{
+	enum SyncCode{
+		OK = 0;          //Success
+		OUT_OF_SYNC = 1;    //The node itself is not in sync status
+		OUT_OF_LEDGERS = 2; //Too many requested ledgers
+		BUSY = 3;           //This node is occupied
+		REFUSE = 4;         //The node itself is not allow sync
+		INTERNAL = 5;       //Inner error
+	}
+	repeated ConsensusValue values = 1;
+	SyncCode sync_code = 2;
+	int64    max_seq = 3;
+	bytes   proof = 4;
+	int64   chain_id = 5;
+}
+
+//for dont have
+message DontHave
+{
+    int64 type = 1;
+    bytes hash = 2;
+};
+
+//for ledger upgrade
+message LedgerUpgradeNotify
+{
+	int64 nonce = 1;   //for broadcast
+	LedgerUpgrade upgrade = 2;
+	Signature signature = 3;   //consensus sig
+};
+
+//for key value db storage
+message EntryList{
+	repeated bytes entry = 1;
+}
+
+//message interfaces for java
+enum ChainMessageType {
+	CHAIN_TYPE_NONE = 0;
+	CHAIN_HELLO = 10; // response with CHAIN_STATUS = 2;
+	CHAIN_TX_STATUS = 11;
+	CHAIN_PEER_ONLINE = 12;
+	CHAIN_PEER_OFFLINE = 13;
+	CHAIN_PEER_MESSAGE = 14;
+	CHAIN_SUBMITTRANSACTION = 15;
+	CHAIN_LEDGER_HEADER = 16; //bifchain notifies the client ledger(protocol::LedgerHeader) when closed
+	CHAIN_CONTRACT_LOG = 17; // smart contract log
+	CHAIN_LEDGER_TXS = 18;
+	CHAIN_SUBSCRIBE_TX = 19; //response with CHAIN_RESPONSE
+	CHAIN_TX_ENV_STORE = 20;
+}
+
+//Register notification events
+message ChainHello {
+	repeated ChainMessageType api_list = 1;	//By default, enable all apis
+	int64	timestamp = 2;
+}
+
+
+//1.ChainHello response
+//2.async notification from local
+message ChainStatus {
+	string self_addr		= 1;
+	int64 ledger_version	= 2;
+	int64 monitor_version	= 3;
+	string chain_version		= 4;
+	int64	timestamp		= 5;
+	int64   network_id		= 6;
+	string   chain_code		= 7;
+	string   address_prefix  = 8;
+}
+
+message ChainPeerMessage {
+	string src_peer_addr = 1; 
+	repeated string des_peer_addrs = 2; 
+	bytes	data = 3;		
+}
+
+message ChainSubscribeTx{
+	repeated string address = 1;
+}
+
+message ChainResponse{
+		int32 error_code = 1;
+		string error_desc = 2;
+}
+
+message ChainTxStatus {
+	enum TxStatus {
+		UNDEFINED	= 0;
+		CONFIRMED	= 1;	// web server will check tx parameters, signatures etc fist, noitfy CONFIRMED if pass
+		PENDING		= 2;	// master will check futher before put it into pending queue
+		COMPLETE	= 3;	// notify if Tx write ledger successfully
+		FAILURE		= 4;	// notify once failed before broadcast and set error_code
+		APPLY_FAILURE  = 5;  // notify once failed after apply and set error_code
+	};
+
+	TxStatus	status = 1;
+	string		tx_hash = 2;
+	string		source_address = 3;
+	int64		source_account_seq = 4;
+	int64		ledger_seq = 5;			//on which block this tx records
+	int64		new_account_seq = 6;		//new account sequence if COMPLETE
+	ERRORCODE	error_code = 7;			//use it if FAIL
+	string		error_desc = 8	;			//error desc
+	int64		timestamp = 9;			
+}
+
+message TransactionEnvResult {
+	protocol.TransactionEnv tran_env = 1;
+	string tx_hash = 2;
+	ERRORCODE error_code = 3;
+	string error_desc = 4;
+	int64 ledger_seq = 5;
+	int64 close_time = 6;
+	int64 actual_fee = 7;
+	repeated bytes contract_tx_hashes = 8;
+}
+
+message LedgerTxs {
+	protocol.LedgerHeader header = 1;
+    repeated TransactionEnvResult txs = 2;
+	int64 ledger_length = 3;
+}
+
+message ChainContractLog {
+	string sender = 1;
+	string data = 2;
+	int64 timestamp = 3;
+}
+
