@@ -1,10 +1,10 @@
-# github.com/caict-4iot-dev/BIF-Core-SDK-Go
+# BIF-Core-SDK-Go
 
-# 4. github.com/caict-4iot-dev/BIF-Core-SDK-Go使用说明
+# 4. BIF-Core-SDK-Go使用说明
 
 ​		本节详细说明SDK常用接口文档。星火链提供 GO SDK供开发者使用。
 
-​        **github**代码库地址：
+​        **github**代码库地址：github.com/caict-4iot-dev/BIF-Core-SDK-Go
 
 ## 4.1 SDK概述
 
