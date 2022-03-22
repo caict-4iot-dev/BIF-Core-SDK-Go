@@ -1,14 +1,14 @@
 # BIF-Core-SDK-Go
 
-# 4. BIF-Core-SDK-Go使用说明
+# 1. BIF-Core-SDK-Go使用说明
 
 ​		本节详细说明SDK常用接口文档。星火链提供 GO SDK供开发者使用。
 
 ​        **github**代码库地址：github.com/caict-4iot-dev/BIF-Core-SDK-Go
 
-## 4.1 SDK概述
+## 1.1 SDK概述
 
-### 4.1.1 名词解析
+### 1.1.1 名词解析
 
 + 账户服务： 提供账户相关的有效性校验、创建与查询接口
 
@@ -20,7 +20,7 @@
 
 + 账户nonce值： 每个账户都维护一个序列号，用于用户提交交易时标识交易执行顺序的
 
-### 4.1.2 请求参数与相应数据格式
+### 1.1.2 请求参数与相应数据格式
 
 + **请求参数**
 
@@ -66,13 +66,13 @@
     }
 ```
 
-## 4.2 SDK使用方法
+## 1.2 SDK使用方法
 
 ​		本节介绍SDK的使用流程。
 
 ​		首先需要生成SDK实现，然后调用相应服务的接口，其中服务包括账户服务、合约服务、交易服务和区块服务。
 
-### 4.2.1 生成SDK实例
+### 1.2.1 生成SDK实例
 
 ​		调用SDK的接口getInstance来实现，调用如下：
 
@@ -81,7 +81,7 @@
     sdk, err := GetInstance(url)
 ```
 
-### 4.2.2 生成公私钥地址
+### 1.2.2 生成公私钥地址
 
 + **Ed25519算法生成**
 
@@ -116,7 +116,7 @@
     rawPrivateKey := keyPair.GetRawPrivateKey()
 ```
 
-### 4.2.3 私钥对象使用
+### 1.2.3 私钥对象使用
 
 + **构造对象**
 
@@ -179,7 +179,7 @@
     }
 ```
 
-### 4.2.4 公钥对象使用
+### 1.2.4 公钥对象使用
 
 + **构造对象**
 
@@ -236,7 +236,7 @@
     }
 ```
 
-### 4.2.5 密钥存储器
+### 1.2.5 密钥存储器
 
 + **生成密钥存储器**
 
@@ -312,7 +312,7 @@
     fmt.Println("encPrivateKey:", encPrivateKey)
 ```
 
-### 4.2.6 助记词
+### 1.2.6 助记词
 
 + **生成助记词**
 
@@ -361,7 +361,7 @@
     fmt.Println("encPrivateKey:", encPrivateKey)
 ```
 
-## 4.3 账户服务接口列表
+## 1.3 账户服务接口列表
 
 ​		账户服务接口主要是账户相关的接口，目前有8个接口：
 
@@ -376,7 +376,7 @@
 | 7    | SetPrivilege        | 设置权限                              |
 | 8    | GetAccountPriv      | 获取账户权限                          |
 
-### 4.3.1 CreateAccount
+### 1.3.1 CreateAccount
 
 > 接口说明
 
@@ -450,7 +450,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.3.2 GetAccount
+### 1.3.2 GetAccount
 
 > 接口说明
 
@@ -508,7 +508,7 @@
     }
 ```
 
-### 4.3.3 GetNonce
+### 1.3.3 GetNonce
 
 > 接口说明
 
@@ -563,7 +563,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.3.4 GetAccountBalance
+### 1.3.4 GetAccountBalance
 
 > 接口说明
 
@@ -618,7 +618,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.3.5 SetMetadatas
+### 1.3.5 SetMetadatas
 
 > 接口说明
 
@@ -689,7 +689,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.3.6 GetAccountMetadatas
+### 1.3.6 GetAccountMetadatas
 
 > 接口说明
 
@@ -752,7 +752,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.3.7 SetPrivilege
+### 1.3.7 SetPrivilege
 
 > 接口说明
 
@@ -825,7 +825,7 @@
     fmt.Println("res: ", string(dataByte))  
 ```
 
-### 4.3.8 GetAccountPriv
+### 1.3.8 GetAccountPriv
 
 > 接口说明
 
@@ -889,7 +889,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-## 4.4 合约服务接口列表
+## 1.4 合约服务接口列表
 
 ​		合约服务接口主要是合约相关的接口，目前有6个接口：
 
@@ -902,7 +902,7 @@
 | 5    | ContractQuery        | 该接口用于调试合约代码             |
 | 6    | ContractInvoke       | 合约调用                           |
 
-### 4.4.1 CheckContractAddress
+### 1.4.1 CheckContractAddress
 
 > 接口说明
 
@@ -953,7 +953,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.4.2 ContractCreate
+### 1.4.2 ContractCreate
 
 > 接口说明
 
@@ -1030,7 +1030,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.4.3 GetContractInfo
+### 1.4.3 GetContractInfo
 
 > 接口说明
 
@@ -1086,7 +1086,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.4.4 GetContractAddress
+### 1.4.4 GetContractAddress
 
 > 接口说明
 
@@ -1144,7 +1144,7 @@
 
 ```
 
-### 4.4.5 ContractQuery
+### 1.4.5 ContractQuery
 
 > 接口说明
 
@@ -1203,7 +1203,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.4.6 ContractInvoke
+### 1.4.6 ContractInvoke
 
 > 接口说明
 
@@ -1277,7 +1277,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-## 4.5 交易服务接口列表
+## 1.5 交易服务接口列表
 
 ​		交易服务接口主要是交易相关的接口，目前有6个接口：
 
@@ -1290,7 +1290,7 @@
 | 5    | EvaluateFee           | 该接口实现交易的费用评估           |
 | 6    | BIFSubmit             | 提交交易                           |
 
-### 4.5.1 GasSend
+### 1.5.1 GasSend
 
 > 接口说明
 
@@ -1358,7 +1358,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.5.2 PrivateContractCreate
+### 1.5.2 PrivateContractCreate
 
 > 接口说明
 
@@ -1433,7 +1433,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.5.3 PrivateContractCall
+### 1.5.3 PrivateContractCall
 
 > 接口说明
 
@@ -1507,7 +1507,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.5.4 GetTransactionInfo
+### 1.5.4 GetTransactionInfo
 
 > 接口说明
 
@@ -1571,7 +1571,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 4.5.5 EvaluateFee
+### 1.5.5 EvaluateFee
 
 > 接口说明
 
@@ -1677,7 +1677,7 @@
 
 
 
-### 4.5.6 BIFSubmit
+### 1.5.6 BIFSubmit
 
 > 接口说明
 
@@ -1738,7 +1738,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
 
 
 
-## 4.6 区块服务接口列表
+## 1.6 区块服务接口列表
 
 ​		区块服务接口主要是区块相关的接口，目前有6个接口：
 
@@ -1751,7 +1751,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
 | 5    | GetValidators       | 该接口用于获取指定区块中所有验证节点数  |
 | 6    | GetLatestValidators | 该接口用于获取最新区块中所有验证节点数  |
 
-### 4.6.1 GetBlockNumber
+### 1.6.1 GetBlockNumber
 
 > 接口说明
 
@@ -1789,7 +1789,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
     fmt.Println("blockNumber:", res.Result.Header.BlockNumber)
 ```
 
-### 4.6.2 GetTransactions
+### 1.6.2 GetTransactions
 
 > 接口说明
 
@@ -1837,7 +1837,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
     fmt.Printf("result: %+v \n", res.Result)
 ```
 
-### 4.6.3 GetBlockInfo
+### 1.6.3 GetBlockInfo
 
 > 接口说明
 
@@ -1888,7 +1888,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
     fmt.Printf("result: %+v \n", res.Result)
 ```
 
-### 4.6.4 GetBlockLatestInfo
+### 1.6.4 GetBlockLatestInfo
 
 > 接口说明
 
@@ -1932,7 +1932,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
     fmt.Printf("result: %+v \n", res.Result)
 ```
 
-### 4.6.5 GetValidators
+### 1.6.5 GetValidators
 
 > 接口说明
 
@@ -1980,7 +1980,7 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
     fmt.Printf("result: %+v \n", res.Result)
 ```
 
-### 4.6.6 GetLatestValidators
+### 1.6.6 GetLatestValidators
 
 > 接口说明
 
