@@ -207,11 +207,11 @@ func (cs *ContractService) ContractInvoke(r request.BIFContractInvokeRequest) re
 			BIFBaseResponse: exception.INVALID_CONTRACTADDRESS_ERROR,
 		}
 	}
-	if r.BIFAmount == 0 || r.BIFAmount < common.INIT_ZERO {
-		return response.BIFContractInvokeResponse{
-			BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
-		}
-	}
+	//if r.BIFAmount == 0 || r.BIFAmount < common.INIT_ZERO {
+	//	return response.BIFContractInvokeResponse{
+	//		BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
+	//	}
+	//}
 	if r.PrivateKey == "" {
 		return response.BIFContractInvokeResponse{
 			BIFBaseResponse: exception.PRIVATEKEY_NULL_ERROR,

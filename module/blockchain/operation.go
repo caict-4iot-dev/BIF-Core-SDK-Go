@@ -404,11 +404,11 @@ func (os *OperationService) ContractInvokeOperation(r request.BIFContractInvokeO
 			BIFBaseResponse: exception.SOURCEADDRESS_EQUAL_CONTRACTADDRESS_ERROR,
 		}
 	}
-	if r.BifAmount <= common.INIT_ZERO {
-		return response.BIFContractInvokeOperationResponse{
-			BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
-		}
-	}
+	//if r.BifAmount <= common.INIT_ZERO {
+	//	return response.BIFContractInvokeOperationResponse{
+	//		BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
+	//	}
+	//}
 	if !checkContractValid(os.url, r.ContractAddress) {
 		return response.BIFContractInvokeOperationResponse{
 			BIFBaseResponse: exception.CONTRACTADDRESS_NOT_CONTRACTACCOUNT_ERROR,
