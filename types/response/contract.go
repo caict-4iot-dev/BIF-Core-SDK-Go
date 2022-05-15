@@ -63,8 +63,10 @@ type QueryRetsResult struct {
 }
 
 type QueryResult struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	//Type  string `json:"type"`
+	//Value string `json:"value"`
+	Data    string `json:"data"`
+	Gasused int64  `json:"gasused"`
 }
 
 // BIFContractInvokeResponse 合约调用响应体
