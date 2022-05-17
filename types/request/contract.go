@@ -36,6 +36,7 @@ type BIFContractCallRequest struct {
 	Input           string `json:"input"`            // 选填，合约入参
 	FeeLimit        int64  `json:"fee_limit"`
 	GasPrice        int64  `json:"gas_price"`
+	Type            int    `json:"type"` // 选填，合约类型 默认是0 , 0: javascript，1 :evm
 }
 
 // BIFContractInvokeRequest 合约调用请求体

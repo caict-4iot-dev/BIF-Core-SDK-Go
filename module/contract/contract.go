@@ -151,13 +151,22 @@ func (cs *ContractService) ContractQuery(r request.BIFContractCallRequest) respo
 		r.GasPrice = common.GAS_PRICE
 	}
 
-	contractCallResponse := callContract(cs.url, r.SourceAddress, r.ContractAddress, common.CONTRACT_QUERY_OPT_TYPE, r.Input, r.GasPrice, r.FeeLimit)
-	return contractCallResponse
+	var resp response.BIFContractCallResponse
+	if r.Type == common.CONTRACT_TYPE_EVM {
+		contractCallResponse := callContractEvm(cs.url, r.SourceAddress, r.ContractAddress, common.CONTRACT_QUERY_OPT_TYPE, r.Input, r.GasPrice, r.FeeLimit)
+		resp.BIFBaseResponse = contractCallResponse.BIFBaseResponse
+		resp.Result = contractCallResponse.Result
+		return resp
+	}
+	contractCallResponse := callContractJs(cs.url, r.SourceAddress, r.ContractAddress, common.CONTRACT_QUERY_OPT_TYPE, r.Input, r.GasPrice, r.FeeLimit)
+	resp.BIFBaseResponse = contractCallResponse.BIFBaseResponse
+	resp.Result = contractCallResponse.Result
+	return resp
 }
 
-func callContract(url string, sourceAddress string, contractAddress string, optType int, input string, gasPrice int64, feeLimit int64) response.BIFContractCallResponse {
+func callContractJs(url string, sourceAddress string, contractAddress string, optType int, input string, gasPrice int64, feeLimit int64) response.BIFContractCallJsResponse {
 	if url == "" {
-		return response.BIFContractCallResponse{
+		return response.BIFContractCallJsResponse{
 			BIFBaseResponse: exception.URL_EMPTY_ERROR,
 		}
 	}
@@ -171,7 +180,7 @@ func callContract(url string, sourceAddress string, contractAddress string, optT
 	params["gas_price"] = gasPrice
 	paramsByte, err := json.Marshal(params)
 	if err != nil {
-		return response.BIFContractCallResponse{
+		return response.BIFContractCallJsResponse{
 			BIFBaseResponse: exception.SYSTEM_ERROR,
 		}
 	}
@@ -179,15 +188,55 @@ func callContract(url string, sourceAddress string, contractAddress string, optT
 	contractCallURL := common.ContractCallURL(url)
 	dataByte, err := http.HttpPost(contractCallURL, paramsByte)
 	if err != nil {
-		return response.BIFContractCallResponse{
+		return response.BIFContractCallJsResponse{
 			BIFBaseResponse: exception.CONNECTNETWORK_ERROR,
 		}
 	}
 
-	var res response.BIFContractCallResponse
+	var res response.BIFContractCallJsResponse
 	err = json.Unmarshal(dataByte, &res)
 	if err != nil {
-		return response.BIFContractCallResponse{
+		return response.BIFContractCallJsResponse{
+			BIFBaseResponse: exception.SYSTEM_ERROR,
+		}
+	}
+
+	return res
+}
+
+func callContractEvm(url string, sourceAddress string, contractAddress string, optType int, input string, gasPrice int64, feeLimit int64) response.BIFContractCallEvmResponse {
+	if url == "" {
+		return response.BIFContractCallEvmResponse{
+			BIFBaseResponse: exception.URL_EMPTY_ERROR,
+		}
+	}
+
+	params := make(map[string]interface{})
+	params["opt_type"] = optType
+	params["fee_limit"] = feeLimit
+	params["source_address"] = sourceAddress
+	params["contract_address"] = contractAddress
+	params["input"] = input
+	params["gas_price"] = gasPrice
+	paramsByte, err := json.Marshal(params)
+	if err != nil {
+		return response.BIFContractCallEvmResponse{
+			BIFBaseResponse: exception.SYSTEM_ERROR,
+		}
+	}
+	// call contract
+	contractCallURL := common.ContractCallURL(url)
+	dataByte, err := http.HttpPost(contractCallURL, paramsByte)
+	if err != nil {
+		return response.BIFContractCallEvmResponse{
+			BIFBaseResponse: exception.CONNECTNETWORK_ERROR,
+		}
+	}
+
+	var res response.BIFContractCallEvmResponse
+	err = json.Unmarshal(dataByte, &res)
+	if err != nil {
+		return response.BIFContractCallEvmResponse{
 			BIFBaseResponse: exception.SYSTEM_ERROR,
 		}
 	}

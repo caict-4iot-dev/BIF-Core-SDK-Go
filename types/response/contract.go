@@ -51,20 +51,43 @@ type ContractAddressInfo struct {
 // BIFContractCallResponse 合约查询接口响应体
 type BIFContractCallResponse struct {
 	BIFBaseResponse
-	Result BIFContractCallResult `json:"result"`
+	Result interface{} `json:"result"`
 }
 
-type BIFContractCallResult struct {
-	QueryRets []QueryRetsResult `json:"query_rets"` // 查询结果集
+// BIFContractCallJsResponse js合约查询接口响应体
+type BIFContractCallJsResponse struct {
+	BIFBaseResponse
+	Result BIFContractCallJsResult `json:"result"`
 }
 
-type QueryRetsResult struct {
-	Result QueryResult `json:"result"`
+type BIFContractCallJsResult struct {
+	QueryRets []QueryRetsJsResult `json:"query_rets"` // 查询结果集
 }
 
-type QueryResult struct {
-	//Type  string `json:"type"`
-	//Value string `json:"value"`
+type QueryRetsJsResult struct {
+	Result QueryJsResult `json:"result"`
+}
+
+type QueryJsResult struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+// BIFContractCallEvmResponse evm合约查询接口响应体
+type BIFContractCallEvmResponse struct {
+	BIFBaseResponse
+	Result BIFContractCallEvmResult `json:"result"`
+}
+
+type BIFContractCallEvmResult struct {
+	QueryRets []QueryRetsEvmResult `json:"query_rets"` // 查询结果集
+}
+
+type QueryRetsEvmResult struct {
+	Result QueryEvmResult `json:"result"`
+}
+
+type QueryEvmResult struct {
 	Data    string `json:"data"`
 	Gasused int64  `json:"gasused"`
 }

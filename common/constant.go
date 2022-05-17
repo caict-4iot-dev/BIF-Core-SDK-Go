@@ -24,4 +24,7 @@ const (
 
 	INIT_ZERO_L int64 = 0
 	INIT_ONE_L  int64 = 1
+
+	// CONTRACT_TYPE_EVM 合约类型evm合约
+	CONTRACT_TYPE_EVM int = 1
 )
