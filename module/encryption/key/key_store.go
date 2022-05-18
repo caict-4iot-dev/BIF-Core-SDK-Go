@@ -5,7 +5,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"io"
 	mrand "math/rand"
 	"strconv"
@@ -103,5 +102,5 @@ func AESDecrypt(key []byte, cryptoText string) string {
 
 	stream.XORKeyStream(ciphertext, ciphertext)
 
-	return fmt.Sprintf("%s", ciphertext)
+	return string(ciphertext)
 }
