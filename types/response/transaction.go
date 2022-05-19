@@ -132,3 +132,16 @@ type BIFTransactionFees struct {
 	FeeLimit int64 `json:"fee_limit"`
 	GasPrice int64 `json:"gas_price"`
 }
+
+type BIFTransactionGetTxCacheSizeResponse struct {
+	BIFBaseResponse
+	Result BIFTransactionGetTxCacheSizeResult `json:"result"`
+}
+
+type BIFTransactionGetTxCacheSizeResult struct {
+	QueueSize int64 `json:"queue_size"`
+}
+
+type TransactionGetTxCacheSizeResponse struct {
+	QueueSize int64 `json:"queue_size"`
+}

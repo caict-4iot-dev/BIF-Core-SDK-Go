@@ -1737,6 +1737,47 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
 ```
 
 
+### 1.5.7 getTxCacheSize
+
+> 接口说明
+
+   	该接口用于获取交易池中交易条数。
+
+> 调用方法
+
+```go
+GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse
+```
+
+> 响应数据
+
+| 参数       | 类型 | 描述                 |
+| ---------- | ---- | -------------------- |
+| queue_size | int64 | 返回交易池中交易条数 |
+
+> 错误码
+
+| 异常                 | 错误码 | 描述                             |
+| -------------------- | ------ | -------------------------------- |
+| CONNECTNETWORK_ERROR | 11007  | Failed to connect to the network |
+| SYSTEM_ERROR         | 20000  | System error                     |
+
+> 示例
+
+```go
+    res := ts.GetTxCacheSize()
+    if res.ErrorCode != 0 {
+        t.Error(res.ErrorDesc)
+    }
+    
+    dataByte, err := json.Marshal(res)
+    if err != nil {
+        t.Error(err)
+    }
+    
+    fmt.Println("res: ", string(dataByte))
+```
+
 
 ## 1.6 区块服务接口列表
 

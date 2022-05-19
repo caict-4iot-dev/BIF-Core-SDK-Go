@@ -50,11 +50,11 @@ type BIFTransactionGetInfoRequest struct {
 
 // BIFRadioTransactionRequest 广播交易请求体
 type BIFRadioTransactionRequest struct {
-	SenderAddress    string      `json:"senderAddress"`
-	FeeLimit         int64       `json:"feeLimit"`
-	GasPrice         int64       `json:"gasPrice"`
+	SenderAddress    string      `json:"sender_address"`
+	FeeLimit         int64       `json:"fee_limit"`
+	GasPrice         int64       `json:"gas_price"`
 	Operation        interface{} `json:"operation"`
-	CeilLedgerSeq    int64       `json:"ceilLedgerSeq"`
+	CeilLedgerSeq    int64       `json:"ceil_ledger_seq"`
 	Remarks          string      `json:"remarks"`
 	SenderPrivateKey string      `json:"privateKey"`
 }

@@ -74,3 +74,7 @@ func PriTxReceiveRaw(url string, priTxHash string) string {
 func PriTxReceive(url string, priTxHash string) string {
 	return url + "/priTxReceive?pri_tx_hash=" + priTxHash
 }
+
+func GetTxCacheSize(url string) string {
+	return url + "/getTxCacheSize"
+}

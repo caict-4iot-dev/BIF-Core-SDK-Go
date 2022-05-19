@@ -28,6 +28,8 @@ type BIFTransactionService interface {
 	EvaluateFee(r request.BIFTransactionEvaluateFeeRequest) response.BIFTransactionEvaluateFeeResponse
 	// BIFSubmit 交易提交
 	BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitResponse
+	// GetTxCacheSize 获取交易池中交易条数
+	GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse
 }
 
 // TransactionService ...
@@ -583,9 +585,9 @@ func (ts *TransactionService) EvaluateFee(r request.BIFTransactionEvaluateFeeReq
 		Operations:    operations,
 	}
 
-	transactionItem := make(map[string]proto.Transaction, 0)
+	transactionItem := make(map[string]proto.Transaction)
 	transactionItem["transaction_json"] = transaction
-	testTransactionRequest := make(map[string]interface{}, 0)
+	testTransactionRequest := make(map[string]interface{})
 	transactionItems := make([]map[string]proto.Transaction, 0)
 	transactionItems = append(transactionItems, transactionItem)
 	testTransactionRequest["items"] = transactionItems
@@ -612,4 +614,28 @@ func (ts *TransactionService) EvaluateFee(r request.BIFTransactionEvaluateFeeReq
 	}
 
 	return res
+}
+
+func (ts *TransactionService) GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse {
+	getTxCacheSizeUrl := common.GetTxCacheSize(ts.url)
+	dataByte, err := http.HttpGet(getTxCacheSizeUrl)
+	if err != nil {
+		return response.BIFTransactionGetTxCacheSizeResponse{
+			BIFBaseResponse: exception.CONNECTNETWORK_ERROR,
+		}
+	}
+	var getTxCacheSizeResponse response.TransactionGetTxCacheSizeResponse
+	err = json.Unmarshal(dataByte, &getTxCacheSizeResponse)
+	if err != nil {
+		return response.BIFTransactionGetTxCacheSizeResponse{
+			BIFBaseResponse: exception.SYSTEM_ERROR,
+		}
+	}
+
+	return response.BIFTransactionGetTxCacheSizeResponse{
+		BIFBaseResponse: exception.SUCCESS,
+		Result: response.BIFTransactionGetTxCacheSizeResult{
+			QueueSize: getTxCacheSizeResponse.QueueSize,
+		},
+	}
 }

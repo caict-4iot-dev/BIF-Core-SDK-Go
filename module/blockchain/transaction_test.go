@@ -217,3 +217,18 @@ func TestBIFSubmit(t *testing.T) {
 
 	fmt.Println("res: ", string(dataByte))
 }
+
+func TestGetTxCacheSize(t *testing.T) {
+	ts := GetTransactionInstance(SDK_INSTANCE_URL)
+	res := ts.GetTxCacheSize()
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}
