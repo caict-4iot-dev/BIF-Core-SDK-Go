@@ -51,3 +51,13 @@ type BIFContractInvokeRequest struct {
 	Input           string `json:"input"`            // 选填，待触发的合约的main()入参
 	GasPrice        int64  `json:"gas_price"`
 }
+
+type BIFBatchContractInvokeRequest struct {
+	SenderAddress string                       `json:"sender_address"` // 必填，交易源账号，即交易的发起方
+	FeeLimit      int64                        `json:"fee_limit"`      // 可选，交易花费的手续费，默认1000000L
+	Operations    []BIFContractInvokeOperation `json:"operations"`
+	PrivateKey    string                       `json:"private_key"`     // 必填，交易源账户私钥
+	CeilLedgerSeq int64                        `json:"ceil_ledger_seq"` // 可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
+	Remarks       string                       `json:"remarks"`         // 可选，用户自定义给交易的备注，16进制格式
+	GasPrice      int64                        `json:"gas_price"`
+}

@@ -93,6 +93,18 @@ func (os *OperationService) GetOperations(operation interface{}, transSourceAddr
 			return operations, operationResData.BIFBaseResponse
 		}
 		operations = append(operations, operationResData.Result.Operation)
+	case []request.BIFContractInvokeOperation:
+		operationsData, ok := operation.([]request.BIFContractInvokeOperation)
+		if !ok {
+			return operations, exception.OPERATIONS_ONE_ERROR
+		}
+		for _, v := range operationsData {
+			operationResData := os.ContractInvokeOperation(v)
+			if operationResData.ErrorCode != 0 {
+				return operations, operationResData.BIFBaseResponse
+			}
+			operations = append(operations, operationResData.Result.Operation)
+		}
 	case request.BIFPrivateContractCreateOperation:
 		operationsData, ok := operation.(request.BIFPrivateContractCreateOperation)
 		if !ok {

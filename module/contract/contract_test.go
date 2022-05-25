@@ -3,6 +3,7 @@ package contract
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/module/encryption/key"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/request"
 	"testing"
 )
@@ -120,6 +121,54 @@ func TestContractCreate(t *testing.T) {
 	r.FeeLimit = 10000000000
 
 	res := bs.ContractCreate(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}
+
+func TestBatchContractInvoke(t *testing.T) {
+	bs := GetContractInstance(SDK_INSTANCE_URL)
+	var r request.BIFBatchContractInvokeRequest
+	senderAddress := "did:bid:ef7zyvBtyg22NC4qDHwehMJxeqw6Mmrh"
+	contractAddress := "did:bid:eftzENB3YsWymQnvsLyF4T2ENzjgEg41"
+	senderPrivateKey := "priSPKr2dgZTCNj1mGkDYyhyZbCQhEzjQm7aEAnfVaqGmXsW2x"
+
+	r.SenderAddress = senderAddress
+	r.PrivateKey = senderPrivateKey
+
+	keyPair01, err := key.GetBidAndKeyPair()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress01 := keyPair01.GetEncAddress()
+	keyPair02, err := key.GetBidAndKeyPair()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress02 := keyPair02.GetEncAddress()
+
+	input01 := "{\"method\":\"creation\",\"params\":{\"document\":{\"@context\": [\"https://w3.org/ns/did/v1\"],\"context\": \"https://w3id.org/did/v1\"," +
+		"\"id\": \"" + destAddress01 + "\", \"version\": \"1\"}}}"
+	input02 := "{\"method\":\"creation\",\"params\":{\"document\":{\"@context\": [\"https://w3.org/ns/did/v1\"],\"context\": \"https://w3id.org/did/v1\"," +
+		"\"id\": \"" + destAddress02 + "\", \"version\": \"1\"}}}"
+
+	var operations []request.BIFContractInvokeOperation
+	var operation01 request.BIFContractInvokeOperation
+	var operation02 request.BIFContractInvokeOperation
+	operation01.ContractAddress = contractAddress
+	operation01.Input = input01
+	operation02.ContractAddress = contractAddress
+	operation02.Input = input02
+	operations = append(operations, operation01, operation02)
+	r.Operations = operations
+	res := bs.BatchContractInvoke(r)
 	if res.ErrorCode != 0 {
 		t.Error(res.ErrorDesc)
 	}

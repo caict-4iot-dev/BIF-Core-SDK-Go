@@ -125,7 +125,6 @@ func (ts *TransactionService) RadioTransaction(r request.BIFRadioTransactionRequ
 			BIFBaseResponse: exception.CONNECTNETWORK_ERROR,
 		}
 	}
-
 	var nonceResponse response.BIFAccountGetNonceResponse
 	err = json.Unmarshal(dataByte, &nonceResponse)
 	if err != nil {

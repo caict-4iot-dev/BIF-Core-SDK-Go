@@ -25,6 +25,8 @@ type BIFContractService interface {
 	ContractQuery(bifContractCallRequest request.BIFContractCallRequest) response.BIFContractCallResponse
 	// ContractInvoke 合约调用
 	ContractInvoke(bifContractInvokeRequest request.BIFContractInvokeRequest) response.BIFContractInvokeResponse
+	// BatchContractInvoke 批量调用合约
+	BatchContractInvoke(bifBatchContractInvokeRequest request.BIFBatchContractInvokeRequest) response.BIFContractInvokeResponse
 }
 
 // ContractService ...
@@ -383,6 +385,74 @@ func (cs *ContractService) ContractCreate(r request.BIFContractCreateRequest) re
 	}
 
 	return response.BIFContractCreateResponse{
+		BIFBaseResponse: exception.SUCCESS,
+		Result: response.BIFContractInvokeResult{
+			Hash: radioTransactionResponse.Result.Hash,
+		},
+	}
+}
+
+func (cs *ContractService) BatchContractInvoke(r request.BIFBatchContractInvokeRequest) response.BIFContractInvokeResponse {
+	if !key.IsAddressValid(r.SenderAddress) {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: exception.INVALID_ADDRESS_ERROR,
+		}
+	}
+	for _, opt := range r.Operations {
+		if !key.IsAddressValid(opt.ContractAddress) {
+			return response.BIFContractInvokeResponse{
+				BIFBaseResponse: exception.INVALID_CONTRACTADDRESS_ERROR,
+			}
+		}
+
+		if opt.BifAmount < common.INIT_ZERO {
+			return response.BIFContractInvokeResponse{
+				BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
+			}
+		}
+	}
+	if r.PrivateKey == "" {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: exception.PRIVATEKEY_NULL_ERROR,
+		}
+	}
+	if r.FeeLimit == common.INIT_ZERO {
+		r.FeeLimit = common.FEE_LIMIT
+	}
+	if r.FeeLimit < common.INIT_ZERO {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: exception.INVALID_FEELIMIT_ERROR,
+		}
+	}
+	if r.GasPrice == common.INIT_ZERO {
+		r.GasPrice = common.GAS_PRICE
+	}
+	if r.GasPrice < common.INIT_ZERO {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: exception.INVALID_GASPRICE_ERROR,
+		}
+	}
+
+	// 广播交易
+	bifRadioTransactionRequest := request.BIFRadioTransactionRequest{
+		SenderAddress:    r.SenderAddress,
+		FeeLimit:         r.FeeLimit,
+		GasPrice:         r.GasPrice,
+		Operation:        r.Operations,
+		CeilLedgerSeq:    r.CeilLedgerSeq,
+		Remarks:          r.Remarks,
+		SenderPrivateKey: r.PrivateKey,
+	}
+
+	transactionService := blockchain.GetTransactionInstance(cs.url)
+	radioTransactionResponse := transactionService.RadioTransaction(bifRadioTransactionRequest)
+	if radioTransactionResponse.ErrorCode != common.SUCCESS {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: radioTransactionResponse.BIFBaseResponse,
+		}
+	}
+
+	return response.BIFContractInvokeResponse{
 		BIFBaseResponse: exception.SUCCESS,
 		Result: response.BIFContractInvokeResult{
 			Hash: radioTransactionResponse.Result.Hash,
