@@ -231,8 +231,8 @@
 
     // 验签
     isOK := key.Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg, ED25519)
-    if err != nil {
-        return err
+    if !isOK {
+        return errors.New("verify sign message is failed")
     }
 ```
 
