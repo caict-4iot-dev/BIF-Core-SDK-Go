@@ -421,11 +421,11 @@ func (os *OperationService) ContractInvokeOperation(r request.BIFContractInvokeO
 	//		BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
 	//	}
 	//}
-	if !checkContractValid(os.url, r.ContractAddress) {
-		return response.BIFContractInvokeOperationResponse{
-			BIFBaseResponse: exception.CONTRACTADDRESS_NOT_CONTRACTACCOUNT_ERROR,
-		}
-	}
+	//if !checkContractValid(os.url, r.ContractAddress) {
+	//	return response.BIFContractInvokeOperationResponse{
+	//		BIFBaseResponse: exception.CONTRACTADDRESS_NOT_CONTRACTACCOUNT_ERROR,
+	//	}
+	//}
 
 	operation := &proto.Operation{
 		SourceAddress: r.SourceAddress,
@@ -446,7 +446,7 @@ func (os *OperationService) ContractInvokeOperation(r request.BIFContractInvokeO
 	}
 }
 
-func checkContractValid(url string, contractAddress string) bool {
+func CheckContractValid(url string, contractAddress string) bool {
 	res := GetContractInfo(url, contractAddress)
 	if res.ErrorCode != common.SUCCESS {
 		return false

@@ -280,6 +280,13 @@ func (cs *ContractService) ContractInvoke(r request.BIFContractInvokeRequest) re
 		r.GasPrice = common.GAS_PRICE
 	}
 
+	// 检查合约的有效性
+	if !blockchain.CheckContractValid(cs.url, r.ContractAddress) {
+		return response.BIFContractInvokeResponse{
+			BIFBaseResponse: exception.CONTRACTADDRESS_NOT_CONTRACTACCOUNT_ERROR,
+		}
+	}
+
 	// 广播交易
 	transactionService := blockchain.GetTransactionInstance(cs.url)
 	bifAccountActivateOperation := request.BIFContractInvokeOperation{
@@ -398,19 +405,31 @@ func (cs *ContractService) BatchContractInvoke(r request.BIFBatchContractInvokeR
 			BIFBaseResponse: exception.INVALID_ADDRESS_ERROR,
 		}
 	}
-	for _, opt := range r.Operations {
-		if !key.IsAddressValid(opt.ContractAddress) {
-			return response.BIFContractInvokeResponse{
-				BIFBaseResponse: exception.INVALID_CONTRACTADDRESS_ERROR,
-			}
-		}
 
+	var contractAddressArray []string
+	for _, opt := range r.Operations {
+		contractAddressArray = append(contractAddressArray, opt.ContractAddress)
 		if opt.BifAmount < common.INIT_ZERO {
 			return response.BIFContractInvokeResponse{
 				BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
 			}
 		}
 	}
+
+	for _, v := range contractAddressArray {
+		if !key.IsAddressValid(v) {
+			return response.BIFContractInvokeResponse{
+				BIFBaseResponse: exception.INVALID_CONTRACTADDRESS_ERROR,
+			}
+		}
+		if !blockchain.CheckContractValid(cs.url, v) {
+			return response.BIFContractInvokeResponse{
+				BIFBaseResponse: exception.CONTRACTADDRESS_NOT_CONTRACTACCOUNT_ERROR,
+			}
+		}
+
+	}
+
 	if r.PrivateKey == "" {
 		return response.BIFContractInvokeResponse{
 			BIFBaseResponse: exception.PRIVATEKEY_NULL_ERROR,
