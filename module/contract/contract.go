@@ -8,6 +8,7 @@ import (
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/module/encryption/key"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/request"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/response"
+	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/utils"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/utils/http"
 )
 
@@ -415,8 +416,8 @@ func (cs *ContractService) BatchContractInvoke(r request.BIFBatchContractInvokeR
 			}
 		}
 	}
-
-	for _, v := range contractAddressArray {
+	contractAddressArr := utils.RemoveDuplicateElement(contractAddressArray)
+	for _, v := range contractAddressArr {
 		if !key.IsAddressValid(v) {
 			return response.BIFContractInvokeResponse{
 				BIFBaseResponse: exception.INVALID_CONTRACTADDRESS_ERROR,
