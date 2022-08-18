@@ -148,6 +148,9 @@ func encAddressValid(encAddress string) error {
 	}
 
 	address := []byte(encAddress)[2:]
+	if strings.Contains(string(address), "0") {
+		return errors.New("invalid address")
+	}
 	base58Address := base.Base58Decode(address)
 	if len(base58Address) != 22 {
 		return errors.New("invalid address")
