@@ -30,6 +30,8 @@ type BIFTransactionService interface {
 	BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitResponse
 	// GetTxCacheSize 获取交易池中交易条数
 	GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse
+	// GetTxCacheData 获取交易池交易数据
+	GetTxCacheData(r request.BIFTransactionCacheRequest) response.BIFTransactionCacheResponse
 }
 
 // TransactionService ...
@@ -637,4 +639,33 @@ func (ts *TransactionService) GetTxCacheSize() response.BIFTransactionGetTxCache
 			QueueSize: getTxCacheSizeResponse.QueueSize,
 		},
 	}
+}
+
+func (ts *TransactionService) GetTxCacheData(r request.BIFTransactionCacheRequest) response.BIFTransactionCacheResponse {
+	if ts.url == "" {
+		return response.BIFTransactionCacheResponse{
+			BIFBaseResponse: exception.URL_EMPTY_ERROR,
+		}
+	}
+	if r.Hash != "" && len(r.Hash) != common.HASH_HEX_LENGTH {
+		return response.BIFTransactionCacheResponse{
+			BIFBaseResponse: exception.INVALID_HASH_ERROR,
+		}
+	}
+	getTxCacheSizeUrl := common.GetTxCacheData(ts.url, r.Hash)
+	dataByte, err := http.HttpGet(getTxCacheSizeUrl)
+	if err != nil {
+		return response.BIFTransactionCacheResponse{
+			BIFBaseResponse: exception.CONNECTNETWORK_ERROR,
+		}
+	}
+	var res response.BIFTransactionCacheResponse
+	err = json.Unmarshal(dataByte, &res)
+	if err != nil {
+		return response.BIFTransactionCacheResponse{
+			BIFBaseResponse: exception.SYSTEM_ERROR,
+		}
+	}
+
+	return res
 }

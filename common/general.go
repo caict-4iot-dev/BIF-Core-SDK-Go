@@ -78,3 +78,10 @@ func PriTxReceive(url string, priTxHash string) string {
 func GetTxCacheSize(url string) string {
 	return url + "/getTxCacheSize"
 }
+
+func GetTxCacheData(url string, hash string) string {
+	if hash == "" {
+		return url + "/getTransactionCache"
+	}
+	return url + "/getTransactionCache?hash=" + hash
+}

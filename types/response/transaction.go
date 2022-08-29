@@ -145,3 +145,19 @@ type BIFTransactionGetTxCacheSizeResult struct {
 type TransactionGetTxCacheSizeResponse struct {
 	QueueSize int64 `json:"queue_size"`
 }
+
+type BIFTransactionCacheResponse struct {
+	BIFBaseResponse
+	Result BIFTransactionCacheResult `json:"result"`
+}
+
+type BIFTransactionCacheResult struct {
+	Transactions []BIFTransactionCacheInfo `json:"transactions"`
+}
+
+type BIFTransactionCacheInfo struct {
+	Hash         string             `json:"hash"`
+	IncomingTime string             `json:"incoming_time"`
+	Status       string             `json:"status"`
+	Transaction  BIFTransactionInfo `json:"transaction"`
+}

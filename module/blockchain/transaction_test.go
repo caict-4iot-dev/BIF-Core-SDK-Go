@@ -232,3 +232,21 @@ func TestGetTxCacheSize(t *testing.T) {
 
 	fmt.Println("res: ", string(dataByte))
 }
+
+func TestGetTxCacheData(t *testing.T) {
+	ts := GetTransactionInstance(SDK_INSTANCE_URL)
+	r := request.BIFTransactionCacheRequest{
+		Hash: "",
+	}
+	res := ts.GetTxCacheData(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}

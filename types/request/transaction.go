@@ -100,3 +100,7 @@ type BIFTransactionSerializeRequest struct {
 	CeilLedgerSeq int64       `json:"ceil_ledger_seq"`
 	Metadata      string      `json:"metadata"`
 }
+
+type BIFTransactionCacheRequest struct {
+	Hash string `json:"hash"`
+}
