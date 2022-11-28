@@ -27,4 +27,7 @@ const (
 
 	// CONTRACT_TYPE_EVM 合约类型evm合约
 	CONTRACT_TYPE_EVM int = 1
+
+	// DDO_CONTRACT ...
+	DDO_CONTRACT string = "did:bid:efspy6btdcuzP5BH2N899Ycti5Sd7n3z"
 )

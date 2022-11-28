@@ -250,3 +250,86 @@ func TestGetTxCacheData(t *testing.T) {
 
 	fmt.Println("res: ", string(dataByte))
 }
+
+func TestParseBlob(t *testing.T) {
+	ts := GetTransactionInstance(SDK_INSTANCE_URL)
+	transactionBlobResult := "0a286469643a6269643a65666e5655677151466659657539374142663673476d335746745658485a4232100d2244080962400a0132122c0a286469643a6269643a656641735874357a4d3248737136774359524d5a425335513948764732456d4b10021a01322204080110012204080710022a0ce8aebee7bdaee69d83e9999030c0843d38016014"
+	res := ts.ParseBlob(transactionBlobResult)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}
+
+func TestGetBidByHash(t *testing.T) {
+	ts := GetTransactionInstance(SDK_INSTANCE_URL)
+	hash := "9950eb981a9683698a0cdcc88d285d52b1452a12ebfcbb6ff407c4d5f618172b"
+	res := ts.GetBidByHash(hash)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}
+
+func TestBatchGasSend(t *testing.T) {
+	ts := GetTransactionInstance(SDK_INSTANCE_URL)
+
+	keyPair01, err := key.GetBidAndKeyPairBySM2()
+	if err != nil {
+		t.Error(err)
+	}
+	keyPair02, err := key.GetBidAndKeyPairBySM2()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress1 := keyPair01.GetEncAddress()
+	destAddress2 := keyPair02.GetEncAddress()
+
+	var operations []request.BIFGasSendOperation
+	operation01 := request.BIFGasSendOperation{
+		BIFBaseOperation: request.BIFBaseOperation{
+			OperationType: common.GAS_SEND,
+		},
+		DestAddress: destAddress1,
+		Amount:      1,
+	}
+	operation02 := request.BIFGasSendOperation{
+		BIFBaseOperation: request.BIFBaseOperation{
+			OperationType: common.GAS_SEND,
+		},
+		DestAddress: destAddress2,
+		Amount:      1,
+	}
+
+	operations = append(operations, operation01, operation02)
+
+	r := request.BIFBatchGasSendRequest{
+		SenderAddress: "did:bid:ef7zyvBtyg22NC4qDHwehMJxeqw6Mmrh",
+		PrivateKey:    "priSPKr2dgZTCNj1mGkDYyhyZbCQhEzjQm7aEAnfVaqGmXsW2x",
+		Remarks:       "BatchGasSend",
+		Operations:    operations,
+	}
+	res := ts.BatchGasSend(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}

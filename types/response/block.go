@@ -42,14 +42,14 @@ type BIFTransactionInfo struct {
 }
 
 type BIFOperation struct {
-	Type          int    `json:"type"`
-	SourceAddress string `json:"source_address"`
-	Metadata      string `json:"metadata"`
-	CreateAccount BIFAccountActiviateInfo
-	SendGas       BIFGasSendInfo // pay_coin
-	SetMetadata   BIFAccountSetMetadataInfo
-	SetPrivilege  BIFAccountSetPrivilegeInfo
-	Log           BIFLogInfo
+	Type          int                        `json:"type"`
+	SourceAddress string                     `json:"source_address"`
+	Metadata      string                     `json:"metadata"`
+	CreateAccount BIFAccountActiviateInfo    `json:"create_account"`
+	SendGas       BIFGasSendInfo             `json:"pay_coin"` // pay_coin
+	SetMetadata   BIFAccountSetMetadataInfo  `json:"set_metadata"`
+	SetPrivilege  BIFAccountSetPrivilegeInfo `json:"set_privilege"`
+	Log           BIFLogInfo                 `json:"log"`
 }
 
 type BIFLogInfo struct {

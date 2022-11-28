@@ -73,6 +73,18 @@ func (os *OperationService) GetOperations(operation interface{}, transSourceAddr
 			return operations, operationResData.BIFBaseResponse
 		}
 		operations = append(operations, operationResData.Result.Operation)
+	case []request.BIFGasSendOperation:
+		operationsData, ok := operation.([]request.BIFGasSendOperation)
+		if !ok {
+			return operations, exception.OPERATIONS_ONE_ERROR
+		}
+		for _, v := range operationsData {
+			operationResData := os.GasSendOperation(v)
+			if operationResData.ErrorCode != 0 {
+				return operations, operationResData.BIFBaseResponse
+			}
+			operations = append(operations, operationResData.Result.Operation)
+		}
 	case request.BIFContractCreateOperation:
 		operationsData, ok := operation.(request.BIFContractCreateOperation)
 		if !ok {

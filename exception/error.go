@@ -147,6 +147,9 @@ var (
 	// SIGNATURE_EMPTY_ERROR ...
 	SIGNATURE_EMPTY_ERROR = response.BIFBaseResponse{11067, "The signatures cannot be empty"}
 
+	// OPERATIONS_INVALID_ERROR ...
+	OPERATIONS_INVALID_ERROR = response.BIFBaseResponse{11068, "Operations length must be between 1 and 100"}
+
 	// OPERATION_TYPE_ERROR 操作类型为空
 	OPERATION_TYPE_ERROR = response.BIFBaseResponse{11077, "Operation type cannot be empty"}
 

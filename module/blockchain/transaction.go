@@ -32,6 +32,8 @@ type BIFTransactionService interface {
 	GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse
 	// GetTxCacheData 获取交易池交易数据
 	GetTxCacheData(r request.BIFTransactionCacheRequest) response.BIFTransactionCacheResponse
+	// BatchGasSend 批量转账
+	BatchGasSend(r request.BIFBatchGasSendRequest) response.BIFTransactionGasSendResponse
 }
 
 // TransactionService ...
@@ -668,4 +670,246 @@ func (ts *TransactionService) GetTxCacheData(r request.BIFTransactionCacheReques
 	}
 
 	return res
+}
+
+func (ts *TransactionService) BatchGasSend(r request.BIFBatchGasSendRequest) response.BIFTransactionGasSendResponse {
+	if !key.IsAddressValid(r.SenderAddress) {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: exception.INVALID_ADDRESS_ERROR,
+		}
+	}
+	if len(r.Operations) > 100 || len(r.Operations) == 0 {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: exception.OPERATIONS_INVALID_ERROR,
+		}
+	}
+	if r.PrivateKey == "" {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: exception.PRIVATEKEY_NULL_ERROR,
+		}
+	}
+	if r.FeeLimit == 0 {
+		r.FeeLimit = common.FEE_LIMIT
+	}
+	if r.FeeLimit < common.INIT_ZERO {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: exception.INVALID_FEELIMIT_ERROR,
+		}
+	}
+	if r.GasPrice == common.INIT_ZERO {
+		r.GasPrice = common.GAS_PRICE
+	}
+	if r.GasPrice < common.INIT_ZERO {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: exception.INVALID_GASPRICE_ERROR,
+		}
+	}
+	var operations []request.BIFGasSendOperation
+	for _, v := range r.Operations {
+		if !key.IsAddressValid(v.DestAddress) {
+			return response.BIFTransactionGasSendResponse{
+				BIFBaseResponse: exception.INVALID_ADDRESS_ERROR,
+			}
+		}
+		if v.Amount == 0 || v.Amount < common.INIT_ZERO {
+			return response.BIFTransactionGasSendResponse{
+				BIFBaseResponse: exception.INVALID_AMOUNT_ERROR,
+			}
+		}
+		operations = append(operations, request.BIFGasSendOperation{
+			DestAddress: v.DestAddress,
+			Amount:      v.Amount,
+			BIFBaseOperation: request.BIFBaseOperation{
+				OperationType: common.GAS_SEND,
+			},
+		})
+	}
+
+	radioTransactionRequest := request.BIFRadioTransactionRequest{
+		SenderAddress:    r.SenderAddress,
+		FeeLimit:         r.FeeLimit,
+		GasPrice:         r.GasPrice,
+		Operation:        operations,
+		CeilLedgerSeq:    r.CeilLedgerSeq,
+		Remarks:          r.Remarks,
+		SenderPrivateKey: r.PrivateKey,
+	}
+	// 广播交易
+	radioTransactionResponse := ts.RadioTransaction(radioTransactionRequest)
+	if radioTransactionResponse.ErrorCode != common.SUCCESS {
+		return response.BIFTransactionGasSendResponse{
+			BIFBaseResponse: radioTransactionResponse.BIFBaseResponse,
+		}
+	}
+
+	return response.BIFTransactionGasSendResponse{
+		BIFBaseResponse: exception.SUCCESS,
+		Result: response.BIFTransactionGasSendResult{
+			Hash: radioTransactionResponse.Result.Hash,
+		},
+	}
+}
+
+func (ts *TransactionService) ParseBlob(blob string) response.BIFTransactionParseBlobResponse {
+	if blob == "" {
+		return response.BIFTransactionParseBlobResponse{
+			BIFBaseResponse: exception.REQUEST_NULL_ERROR,
+		}
+	}
+	blobByte, err := hex.DecodeString(blob)
+	if err != nil {
+		return response.BIFTransactionParseBlobResponse{
+			BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+		}
+	}
+	var transaction proto.Transaction
+	err = protobuf.Unmarshal(blobByte, &transaction)
+	if err != nil {
+		return response.BIFTransactionParseBlobResponse{
+			BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+		}
+	}
+
+	var operations []response.BIFOperationFormat
+	var operation response.BIFOperationFormat
+	for _, v := range transaction.Operations {
+		var createAccount response.BIFAccountActiviateInfo
+		createAccountByte, err := json.Marshal(v.CreateAccount)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+		err = json.Unmarshal(createAccountByte, &createAccount)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+
+		var sendGas response.BIFGasSendInfo
+		sendGasByte, err := json.Marshal(v.PayCoin)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+		err = json.Unmarshal(sendGasByte, &sendGas)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+
+		var setMetadata response.BIFAccountSetMetadataInfo
+		setMetadataByte, err := json.Marshal(v.SetMetadata)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+		err = json.Unmarshal(setMetadataByte, &setMetadata)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+
+		var setPrivilege response.BIFAccountSetPrivilegeInfo
+		setPrivilegeByte, err := json.Marshal(v.SetPrivilege)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+		err = json.Unmarshal(setPrivilegeByte, &setPrivilege)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+
+		var log response.BIFLogInfo
+		logByte, err := json.Marshal(v.Log)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+		err = json.Unmarshal(logByte, &log)
+		if err != nil {
+			return response.BIFTransactionParseBlobResponse{
+				BIFBaseResponse: exception.INVALID_SERIALIZATION_ERROR,
+			}
+		}
+
+		operation = response.BIFOperationFormat{
+			Type:          common.GetOperationType(int(v.Type)),
+			SourceAddress: v.SourceAddress,
+			Metadata:      string(v.Metadata),
+			CreateAccount: createAccount,
+			SendGas:       sendGas,
+			SetMetadata:   setMetadata,
+			SetPrivilege:  setPrivilege,
+			Log:           log,
+		}
+		operations = append(operations, operation)
+	}
+
+	return response.BIFTransactionParseBlobResponse{
+		BIFBaseResponse: exception.SUCCESS,
+		Result: response.BIFTransactionParseBlobResult{
+			SourceAddress: transaction.SourceAddress,
+			FeeLimit:      transaction.FeeLimit,
+			GasPrice:      transaction.GasPrice,
+			Nonce:         transaction.Nonce,
+			Operations:    operations,
+			ChainId:       transaction.ChainId,
+			Remarks:       string(transaction.Metadata),
+		},
+	}
+}
+
+func (ts *TransactionService) GetBidByHash(hash string) response.BIFTransactionGetBidResponse {
+	if ts.url == "" {
+		return response.BIFTransactionGetBidResponse{
+			BIFBaseResponse: exception.URL_EMPTY_ERROR,
+		}
+	}
+	if hash == "" {
+		return response.BIFTransactionGetBidResponse{
+			BIFBaseResponse: exception.INVALID_HASH_ERROR,
+		}
+	}
+	r := request.BIFTransactionGetInfoRequest{
+		Hash: hash,
+	}
+	res := ts.GetTransactionInfo(r)
+	if res.ErrorCode != 0 {
+		return response.BIFTransactionGetBidResponse{
+			BIFBaseResponse: exception.SYSTEM_ERROR,
+		}
+	}
+	var bids []string
+
+	for _, v := range res.Result.Transactions {
+		for _, op := range v.Transaction.Operations {
+			if op.SendGas.DestAddress == common.DDO_CONTRACT {
+				var getBidByHashInput response.GetBidByHashInput
+				err := json.Unmarshal([]byte(op.SendGas.Input), &getBidByHashInput)
+				if err != nil {
+					return response.BIFTransactionGetBidResponse{
+						BIFBaseResponse: exception.SYSTEM_ERROR,
+					}
+				}
+				bids = append(bids, getBidByHashInput.Params.Document.Id)
+			}
+		}
+	}
+	return response.BIFTransactionGetBidResponse{
+		BIFBaseResponse: exception.SUCCESS,
+		Result: response.BIFTransactionGetBidResult{
+			Bids: bids,
+		},
+	}
 }

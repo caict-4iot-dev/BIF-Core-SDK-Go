@@ -104,3 +104,14 @@ type BIFTransactionSerializeRequest struct {
 type BIFTransactionCacheRequest struct {
 	Hash string `json:"hash"`
 }
+
+// BIFBatchGasSendRequest 批量交易请求体
+type BIFBatchGasSendRequest struct {
+	SenderAddress string                `json:"sender_address"`
+	PrivateKey    string                `json:"private_key"`
+	CeilLedgerSeq int64                 `json:"ceil_ledger_seq"`
+	Remarks       string                `json:"remarks"`
+	FeeLimit      int64                 `json:"fee_limit"`
+	GasPrice      int64                 `json:"gas_price"`
+	Operations    []BIFGasSendOperation `json:"operations"`
+}

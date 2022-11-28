@@ -161,3 +161,52 @@ type BIFTransactionCacheInfo struct {
 	Status       string             `json:"status"`
 	Transaction  BIFTransactionInfo `json:"transaction"`
 }
+
+// BIFTransactionParseBlobResponse ...
+type BIFTransactionParseBlobResponse struct {
+	BIFBaseResponse
+	Result BIFTransactionParseBlobResult `json:"result"`
+}
+
+type BIFTransactionParseBlobResult struct {
+	SourceAddress string               `json:"source_address"`
+	FeeLimit      int64                `json:"fee_limit"`
+	GasPrice      int64                `json:"gas_price"`
+	Nonce         int64                `json:"nonce"`
+	Operations    []BIFOperationFormat `json:"operations"`
+	ChainId       int64                `json:"chain_id"`
+	Remarks       string               `json:"remarks"`
+}
+
+type BIFOperationFormat struct {
+	Type          string                     `json:"type"`
+	SourceAddress string                     `json:"source_address"`
+	Metadata      string                     `json:"metadata"`
+	CreateAccount BIFAccountActiviateInfo    `json:"create_account"`
+	SendGas       BIFGasSendInfo             `json:"pay_coin"`
+	SetMetadata   BIFAccountSetMetadataInfo  `json:"set_metadata"`
+	SetPrivilege  BIFAccountSetPrivilegeInfo `json:"set_privilege"`
+	Log           BIFLogInfo                 `json:"log"`
+}
+
+type BIFTransactionGetBidResponse struct {
+	BIFBaseResponse
+	Result BIFTransactionGetBidResult `json:"result"`
+}
+
+type BIFTransactionGetBidResult struct {
+	Bids []string `json:"bids"`
+}
+
+type GetBidByHashInput struct {
+	Method string                  `json:"method"`
+	Params GetBidByHashInputParams `json:"params"`
+}
+
+type GetBidByHashInputParams struct {
+	Document InputParamsDocument `json:"document"`
+}
+
+type InputParamsDocument struct {
+	Id string `json:"id"`
+}

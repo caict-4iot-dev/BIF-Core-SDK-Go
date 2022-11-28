@@ -29,3 +29,26 @@ const (
 	// PRIVATE_CONTRACT_CALL Call Private Contract
 	PRIVATE_CONTRACT_CALL = 18
 )
+
+func GetOperationType(operationType int) string {
+	var operation string
+	switch operationType {
+	case 0:
+		operation = "UNKNOWN"
+	case 1:
+		operation = "CREATE_ACCOUNT"
+	case 4:
+		operation = "SET_METADATA"
+	case 6:
+		operation = "SET_THRESHOLD"
+	case 7:
+		operation = "PAY_COIN"
+	case 8:
+		operation = "LOG"
+	case 9:
+		operation = "SET_PRIVILEGE"
+	default:
+		operation = "UNKNOWN"
+	}
+	return operation
+}
