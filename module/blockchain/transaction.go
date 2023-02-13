@@ -400,6 +400,7 @@ func (ts *TransactionService) GetTransactionInfo(r request.BIFTransactionGetInfo
 	return res
 }
 
+//Deprecated
 func (ts *TransactionService) PrivateContractCreate(r request.BIFTransactionPrivateContractCreateRequest) response.BIFTransactionPrivateContractCreateResponse {
 
 	if !key.IsAddressValid(r.SenderAddress) {
@@ -465,6 +466,7 @@ func (ts *TransactionService) PrivateContractCreate(r request.BIFTransactionPriv
 	}
 }
 
+//Deprecated
 func (ts *TransactionService) PrivateContractCall(r request.BIFTransactionPrivateContractCallRequest) response.BIFTransactionPrivateContractCallResponse {
 
 	if !key.IsAddressValid(r.SenderAddress) {

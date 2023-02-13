@@ -1358,7 +1358,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 1.5.2 PrivateContractCreate
+### 1.5.2 PrivateContractCreate(Deprecated)
 
 > 接口说明
 
@@ -1433,7 +1433,7 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
-### 1.5.3 PrivateContractCall
+### 1.5.3 PrivateContractCall(Deprecated)
 
 > 接口说明
 
@@ -1592,7 +1592,7 @@
 | Operations       | []BIFBaseOperation | 必填，待提交的操作，不能为空                                 |
 | gasPrice        | int64                            | 选填，打包费用 (单位是PT)                                    |
 | feeLimit        | int64                            | 选填，交易花费的手续费(单位是PT)                             |
-      
+
 #### BIFBaseOperation
 
 | 序号 | 操作                              | 描述                         |

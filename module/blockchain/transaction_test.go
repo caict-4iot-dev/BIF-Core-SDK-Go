@@ -12,10 +12,11 @@ import (
 	"testing"
 )
 
+//Deprecated
 func TestGetTransactionInfo(t *testing.T) {
 	ts := GetTransactionInstance(SDK_INSTANCE_URL)
 	var r request.BIFTransactionGetInfoRequest
-	r.Hash = "2c0a445f603bdef7e4cfe5f63650f201cda3315b7c560edb79e3fcef611c5f8e"
+	r.Hash = "9241761aa19879216f485c8b78a75d06ae4869e2e31edd197dc844ec67dde0fb"
 	res := ts.GetTransactionInfo(r)
 	if res.ErrorCode != 0 {
 		t.Error(res.ErrorDesc)
