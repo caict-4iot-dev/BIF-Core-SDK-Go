@@ -1595,16 +1595,16 @@
 
 #### BIFBaseOperation
 
-| 序号 | 操作                              | 描述                         |
-| ---- | --------------------------------- | ---------------------------- |
-| 1    | BIFAccountActivateOperation       | 生成主链数字身份             |
-| 2    | BIFAccountSetMetadataOperation    | 修改账户的metadatas信息      |
-| 3    | BIFAccountSetPrivilegeOperation   | 设置权限                     |
-| 4    | BIFContractCreateOperation        | 创建合约（暂不支持EVM 合约） |
-| 5    | BIFContractInvokeOperation        | 合约调用（暂不支持EVM 合约） |
-| 6    | BIFGasSendOperation               | 发起交易                     |
-| 7    | BIFPrivateContractCallOperation   | 私有化交易的合约创建         |
-| 8    | BIFPrivateContractCreateOperation | 私有化交易的合约调用         |
+| 序号 | 操作                              | 描述                             |
+| ---- | --------------------------------- | -------------------------------- |
+| 1    | BIFAccountActivateOperation       | 生成主链数字身份                 |
+| 2    | BIFAccountSetMetadataOperation    | 修改账户的metadatas信息          |
+| 3    | BIFAccountSetPrivilegeOperation   | 设置权限                         |
+| 4    | BIFContractCreateOperation        | 创建合约（暂不支持EVM 合约）     |
+| 5    | BIFContractInvokeOperation        | 合约调用（暂不支持EVM 合约）     |
+| 6    | BIFGasSendOperation               | 发起交易                         |
+| 7    | BIFPrivateContractCallOperation   | 私有化交易的合约创建--Deprecated |
+| 8    | BIFPrivateContractCreateOperation | 私有化交易的合约调用--Deprecated |
 
 > 响应数据
 
@@ -1829,14 +1829,14 @@ if res.ErrorCode != 0 {
 
 ​		区块服务接口主要是区块相关的接口，目前有6个接口：
 
-| 序号 | 接口                | 说明                                    |
-| ---- | ------------------- | --------------------------------------- |
-| 1    | GetBlockNumber      | 该接口用于查询最新的区块高度            |
-| 2    | GetTransactions     | 该接口用于查询指定区块高度下的所有交易3 |
-| 3    | GetBlockInfo        | 该接口用于获取区块信息                  |
-| 4    | GetBlockLatestInfo  | 该接口用于获取最新区块信息              |
-| 5    | GetValidators       | 该接口用于获取指定区块中所有验证节点数  |
-| 6    | GetLatestValidators | 该接口用于获取最新区块中所有验证节点数  |
+| 序号 | 接口                | 说明                                   |
+| ---- | ------------------- | -------------------------------------- |
+| 1    | GetBlockNumber      | 该接口用于查询最新的区块高度           |
+| 2    | GetTransactions     | 该接口用于查询指定区块高度下的所有交易 |
+| 3    | GetBlockInfo        | 该接口用于获取区块信息                 |
+| 4    | GetBlockLatestInfo  | 该接口用于获取最新区块信息             |
+| 5    | GetValidators       | 该接口用于获取指定区块中所有验证节点数 |
+| 6    | GetLatestValidators | 该接口用于获取最新区块中所有验证节点数 |
 
 ### 1.6.1 GetBlockNumber
 
