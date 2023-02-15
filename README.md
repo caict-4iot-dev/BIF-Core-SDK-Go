@@ -86,20 +86,15 @@
 + **Ed25519算法生成**
 
 ```go
-    privateKeyManager, err := key.GetPrivateKeyManager(key.ED25519)
-    if err != nil {
-        return err
-    }
-    publicKeyManager, err := key.GetPublicKeyManager([]byte(privateKeyManager.EncPrivateKey), key.ED25519)
-    if err != nil {
-        return err
-    }
-    
-    encAddress := publicKeyManager.EncAddress
-    encPublicKey := publicKeyManager.EncPublicKey
-    rawPublicKey := privateKeyManager.RawPublicKey
-    encPrivateKey := privateKeyManager.EncPrivateKey
-    rawPrivateKey := privateKeyManager.RawPrivateKey
+    keyPair, err := GetBidAndKeyPair()
+	if err != nil {
+		t.Error(err)
+	}
+	encAddress := keyPair.GetEncAddress()
+	encPublicKey := keyPair.GetEncPublicKey()
+	encPrivateKey := keyPair.GetEncPrivateKey()
+	rawPublicKey := keyPair.GetRawPublicKey()
+	rawPrivateKey := keyPair.GetRawPrivateKey()
 ```
 
 + **SM2算法生成**
@@ -121,7 +116,7 @@
 + **构造对象**
 
 ```go
-    // 私钥对象构造
+    // 私钥对象构造 key.ED25519/key.SM2
     privateKeyManager, err := key.GetPrivateKeyManager(key.ED25519)
     if err != nil {
         return err
@@ -131,7 +126,7 @@
 + **解析对象**
 
 ```go
-    // 私钥对象构造
+    // 私钥对象构造 加密类型 ED25519/SM2
     privateKeyManager, err := key.GetPrivateKeyManager(key.ED25519)
     if err != nil {
         return err
@@ -146,6 +141,7 @@
 + **根据私钥获取公钥**
 
 ```go
+    // 加密类型 ED25519/SM2
     encPrivateKey := "priSrrk31MhNGEGAmnmZPH5K8fnuqTKLuLMvWd6E7TEdEjWkcQ"
     publicKeyManager, err := key.GetPublicKeyManager([]byte(encPrivateKey), key.ED25519)
     if err != nil {
@@ -325,10 +321,11 @@
 > 示例
 
 ```go
-    mnemonic, err := mnemonic.GenerateMnemonicCode()
-    if err != nil {
-        return err
-    }
+   mnemonic, err := GenerateMnemonicCode()
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("mnemonic:", mnemonic)
 ```
 
 + **根据助记词生成私钥**
@@ -1277,6 +1274,108 @@
     fmt.Println("res: ", string(dataByte))
 ```
 
+### 1.4.7 batchContractInvoke
+
+> 接口说明
+
+   	该接口用于批量合约调用。
+
+> 调用方法
+
+```java
+BatchContractInvoke(r request.BIFBatchContractInvokeRequest) response.BIFContractInvokeResponse
+```
+
+> 请求参数
+
+| 参数          | 类型                             | 描述                                                         |
+| ------------- | -------------------------------- | ------------------------------------------------------------ |
+| senderAddress | string                           | 必填，交易源账号，即交易的发起方                             |
+| gasPrice      | Long                             | 选填，打包费用 (单位是PT)默认，默认100L                      |
+| feeLimit      | Long                             | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| privateKey    | String                           | 必填，交易源账户私钥                                         |
+| ceilLedgerSeq | Long                             | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
+| remarks       | String                           | 选填，用户自定义给交易的备注                                 |
+| operations    | List<BIFContractInvokeOperation> | 必填，合约调用集合                                           |
+
+| BIFContractInvokeOperation |        |                                |
+| -------------------------- | ------ | ------------------------------ |
+| contractAddress            | String | 必填，合约账户地址             |
+| BIFAmount                  | Long   | 必填，转账金额                 |
+| input                      | String | 选填，待触发的合约的main()入参 |
+
+
+
+> 响应数据
+
+| 参数 | 类型   | 描述     |
+| ---- | ------ | -------- |
+| hash | string | 交易hash |
+
+
+> 错误码
+
+| 异常                          | 错误码 | 描述                                          |
+| ----------------------------- | ------ | --------------------------------------------- |
+| INVALID_ADDRESS_ERROR         | 11006  | Invalid address                               |
+| REQUEST_NULL_ERROR            | 12001  | Request parameter cannot be null              |
+| PRIVATEKEY_NULL_ERROR         | 11057  | PrivateKeys cannot be empty                   |
+| INVALID_CONTRACTADDRESS_ERROR | 11037  | Invalid contract address                      |
+| INVALID_AMOUNT_ERROR          | 11024  | Amount must be between 0 and Long.MAX_VALUE   |
+| INVALID_FEELIMIT_ERROR        | 11050  | FeeLimit must be between 0 and Long.MAX_VALUE |
+| SYSTEM_ERROR                  | 20000  | System error                                  |
+
+
+> 示例
+
+```go
+bs := GetContractInstance(SDK_INSTANCE_URL)
+	var r request.BIFBatchContractInvokeRequest
+	senderAddress := "did:bid:ef7zyvBtyg22NC4qDHwehMJxeqw6Mmrh"
+	contractAddress := "did:bid:eftzENB3YsWymQnvsLyF4T2ENzjgEg41"
+	senderPrivateKey := "priSPKr2dgZTCNj1mGkDYyhyZbCQhEzjQm7aEAnfVaqGmXsW2x"
+
+	r.SenderAddress = senderAddress
+	r.PrivateKey = senderPrivateKey
+
+	keyPair01, err := key.GetBidAndKeyPair()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress01 := keyPair01.GetEncAddress()
+	keyPair02, err := key.GetBidAndKeyPair()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress02 := keyPair02.GetEncAddress()
+
+	input01 := "{\"method\":\"creation\",\"params\":{\"document\":{\"@context\": [\"https://w3.org/ns/did/v1\"],\"context\": \"https://w3id.org/did/v1\"," +
+		"\"id\": \"" + destAddress01 + "\", \"version\": \"1\"}}}"
+	input02 := "{\"method\":\"creation\",\"params\":{\"document\":{\"@context\": [\"https://w3.org/ns/did/v1\"],\"context\": \"https://w3id.org/did/v1\"," +
+		"\"id\": \"" + destAddress02 + "\", \"version\": \"1\"}}}"
+
+	var operations []request.BIFContractInvokeOperation
+	var operation01 request.BIFContractInvokeOperation
+	var operation02 request.BIFContractInvokeOperation
+	operation01.ContractAddress = contractAddress
+	operation01.Input = input01
+	operation02.ContractAddress = contractAddress
+	operation02.Input = input02
+	operations = append(operations, operation01, operation02)
+	r.Operations = operations
+	res := bs.BatchContractInvoke(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+```
+
 ## 1.5 交易服务接口列表
 
 ​		交易服务接口主要是交易相关的接口，目前有6个接口：
@@ -1787,7 +1886,7 @@ GetTxCacheSize() response.BIFTransactionGetTxCacheSizeResponse
 > 调用方法
 
 ```go
-GetTxCacheData(r request.BIFTransactionCacheRequest) response.BIFTransactionCacheResponse {
+GetTxCacheData(r request.BIFTransactionCacheRequest) response.BIFTransactionCacheResponse 
 ```
 
 > 请求参数
@@ -1825,7 +1924,164 @@ if res.ErrorCode != 0 {
 }
 ```
 
-## 1.6 区块服务接口列表
+### 1.5.9 parseBlob
+
+> 接口说明
+
+   	该接口用于blob数据解析。
+
+> 调用方法
+
+```go
+ParseBlob(blob string) response.BIFTransactionParseBlobResponse
+```
+
+> 请求参数
+
+| 参数 | 类型   | 描述       |
+| ---- | ------ | ---------- |
+| blob | String | 必填，BLOB |
+
+> 响应数据
+
+| 参数          | 类型     | 描述                       |
+| ------------- | -------- | -------------------------- |
+| sourceAddress | String   | 交易源账号，即交易的发起方 |
+| nonce         | String   | 账户交易序列号，必须大于0  |
+| fee_limit     | String   | 交易要求的最低费用         |
+| gas_price     | String   | 交易燃料单价               |
+| remarks       | String   | 用户自定义给交易的备注     |
+| operations    | Object[] | 操作对象数组               |
+
+> 错误码
+
+| 异常                        | 错误码 | 描述                             |
+| --------------------------- | ------ | -------------------------------- |
+| CONNECTNETWORK_ERROR        | 11007  | Failed to connect to the network |
+| SYSTEM_ERROR                | 20000  | System error                     |
+| INVALID_SERIALIZATION_ERROR | 11056  | Invalid serialization            |
+
+> 示例
+
+```go
+    ts := GetTransactionInstance(SDK_INSTANCE_URL)
+	transactionBlobResult := "0a286469643a6269643a65666e5655677151466659657539374142663673476d335746745658485a4232100d2244080962400a0132122c0a286469643a6269643a656641735874357a4d3248737136774359524d5a425335513948764732456d4b10021a01322204080110012204080710022a0ce8aebee7bdaee69d83e9999030c0843d38016014"
+	res := ts.ParseBlob(transactionBlobResult)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+```
+
+### 1.5.10 batchGasSend
+
+> 接口说明
+
+   	该接口用于批量转移星火令。
+
+> 调用方法
+
+```java
+BatchGasSend(r request.BIFBatchGasSendRequest) response.BIFTransactionGasSendResponse
+```
+
+> 请求参数
+
+| 参数          | 类型                      | 描述                                                         |
+| ------------- | ------------------------- | ------------------------------------------------------------ |
+| senderAddress | string                    | 必填，交易源账号，即交易的发起方                             |
+| gasPrice      | Long                      | 选填，打包费用 (单位是PT)默认，默认100L                      |
+| feeLimit      | Long                      | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| privateKey    | String                    | 必填，交易源账户私钥                                         |
+| ceilLedgerSeq | Long                      | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
+| remarks       | String                    | 选填，用户自定义给交易的备注                                 |
+| operations    | List<BIFGasSendOperation> | 必填，转账操作集合                                           |
+
+| BIFGasSendOperation |        |                    |
+| ------------------- | ------ | ------------------ |
+| destAddress         | String | 必填，目标账户地址 |
+| amount              | Long   | 必填，转账金额     |
+
+> 响应数据
+
+| 参数 | 类型   | 描述     |
+| ---- | ------ | -------- |
+| hash | string | 交易hash |
+
+
+> 错误码
+
+| 异常                     | 错误码 | 描述                                          |
+| ------------------------ | ------ | --------------------------------------------- |
+| INVALID_ADDRESS_ERROR    | 11006  | Invalid address                               |
+| REQUEST_NULL_ERROR       | 12001  | Request parameter cannot be null              |
+| PRIVATEKEY_NULL_ERROR    | 11057  | PrivateKeys cannot be empty                   |
+| OPERATIONS_INVALID_ERROR | 11068  | Operations length must be between 1 and 100   |
+| INVALID_AMOUNT_ERROR     | 11024  | Amount must be between 0 and Long.MAX_VALUE   |
+| INVALID_FEELIMIT_ERROR   | 11050  | FeeLimit must be between 0 and Long.MAX_VALUE |
+| SYSTEM_ERROR             | 20000  | System error                                  |
+
+
+> 示例
+
+```go
+ 		ts := GetTransactionInstance(SDK_INSTANCE_URL)
+
+	keyPair01, err := key.GetBidAndKeyPairBySM2()
+	if err != nil {
+		t.Error(err)
+	}
+	keyPair02, err := key.GetBidAndKeyPairBySM2()
+	if err != nil {
+		t.Error(err)
+	}
+	destAddress1 := keyPair01.GetEncAddress()
+	destAddress2 := keyPair02.GetEncAddress()
+
+	var operations []request.BIFGasSendOperation
+	operation01 := request.BIFGasSendOperation{
+		BIFBaseOperation: request.BIFBaseOperation{
+			OperationType: common.GAS_SEND,
+		},
+		DestAddress: destAddress1,
+		Amount:      1,
+	}
+	operation02 := request.BIFGasSendOperation{
+		BIFBaseOperation: request.BIFBaseOperation{
+			OperationType: common.GAS_SEND,
+		},
+		DestAddress: destAddress2,
+		Amount:      1,
+	}
+
+	operations = append(operations, operation01, operation02)
+
+	r := request.BIFBatchGasSendRequest{
+		SenderAddress: "did:bid:ef7zyvBtyg22NC4qDHwehMJxeqw6Mmrh",
+		PrivateKey:    "priSPKr2dgZTCNj1mGkDYyhyZbCQhEzjQm7aEAnfVaqGmXsW2x",
+		Remarks:       "BatchGasSend",
+		Operations:    operations,
+	}
+	res := ts.BatchGasSend(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+```
+
+##  1.6 区块服务接口列表
 
 ​		区块服务接口主要是区块相关的接口，目前有6个接口：
 

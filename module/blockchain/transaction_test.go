@@ -33,9 +33,6 @@ func TestGetTransactionInfo(t *testing.T) {
 func TestGasSend(t *testing.T) {
 	ts := GetTransactionInstance(SDK_INSTANCE_URL)
 	var r request.BIFTransactionGasSendRequest
-	//r.SenderAddress = "did:bid:efzewQxg38x2Tmb1cpxSC1ZWwMZUxUeV"
-	//r.PrivateKey = "priSPKhTMRa7SsQLc4wXUDrEZW5wSeKN68Xy5LuCYQmndS75SZ"
-	//r.DestAddress = "did:bid:zf2AoXhJsmr1aaUMxhnKeMAX42G9Ck526"
 	r.SenderAddress = "did:bid:zf2AoXhJsmr1aaUMxhnKeMAX42G9Ck526"
 	r.PrivateKey = "priSrrk31MhNGEGAmnmZPH5K8fnuqTKLuLMvWd6E7TEdEjWkcQ"
 	r.DestAddress = "did:bid:efzewQxg38x2Tmb1cpxSC1ZWwMZUxUeV"
@@ -52,7 +49,6 @@ func TestGasSend(t *testing.T) {
 		t.Error(err)
 	}
 
-	// "hash":"8034d5b3f3d0ee73e3a5139fe17d340bdfc896da49b8e6d5dcc4b704c959e306"
 	fmt.Println("res: ", string(dataByte))
 }
 
@@ -77,7 +73,6 @@ func TestPrivateContractCreate(t *testing.T) {
 		t.Error(err)
 	}
 
-	// "hash":"278a1f189e235fee846baf22b4ff699e702f9dd407d2361bbfb41159d57f4a2f"
 	fmt.Println("res: ", string(dataByte))
 }
 
@@ -102,8 +97,7 @@ func TestPrivateContractCall(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
-	// "hash":"278a1f189e235fee846baf22b4ff699e702f9dd407d2361bbfb41159d57f4a2f"
+	
 	fmt.Println("res: ", string(dataByte))
 }
 
