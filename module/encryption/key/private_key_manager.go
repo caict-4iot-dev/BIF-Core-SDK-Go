@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"github.com/ZZMarquis/gm/sm2"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/utils/base"
@@ -23,10 +24,10 @@ const (
 )
 
 type PrivateKeyManager struct {
-	EncPrivateKey string
-	RawPrivateKey []byte
-	RawPublicKey  []byte
-	TypeKey       string
+	EncPrivateKey string // 星火私钥
+	RawPrivateKey []byte // 原生私钥
+	RawPublicKey  []byte // 原生公钥
+	TypeKey       string // 加密类型
 }
 
 func GetPrivateKeyManager(keyType int) (*PrivateKeyManager, error) {
@@ -59,6 +60,42 @@ func GetPrivateKeyManager(keyType int) (*PrivateKeyManager, error) {
 
 	var priManager PrivateKeyManager
 	priManager.RawPrivateKey = rawPrivateKey
+	priManager.EncPrivateKey = encPrivateKey
+	priManager.RawPublicKey = rawPublicKey
+	priManager.TypeKey = typeKey
+
+	return &priManager, nil
+}
+
+// GetPrivateKeyManagerByPrivateKey 根据星火私钥获取私钥对象
+func GetPrivateKeyManagerByPrivateKey(encPrivateKey string) (*PrivateKeyManager, error) {
+	keyType, rawPrivateKey, err := GetRawPrivateKey([]byte(encPrivateKey))
+	if err != nil {
+		return nil, err
+	}
+	var rawPublicKey []byte
+	var typeKey string
+
+	switch keyType {
+	case ED25519:
+		rawPublicKey = rawPrivateKey[32:]
+		typeKey = "ed25519"
+	case SM2:
+		priKey, err := sm2.RawBytesToPrivateKey(rawPrivateKey)
+		if err != nil {
+			return nil, err
+		}
+		pubKey := sm2.CalculatePubKey(priKey)
+		rawPublicKey, err = hex.DecodeString("04" + hex.EncodeToString(pubKey.GetRawBytes()))
+		if err != nil {
+			return nil, err
+		}
+		typeKey = "sm2"
+	default:
+		return nil, errors.New("unknown privateKey")
+	}
+	var priManager PrivateKeyManager
+	priManager.RawPrivateKey = rawPrivateKey[:32]
 	priManager.EncPrivateKey = encPrivateKey
 	priManager.RawPublicKey = rawPublicKey
 	priManager.TypeKey = typeKey

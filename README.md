@@ -121,6 +121,13 @@
     if err != nil {
         return err
     }
+	
+    // 根据星火私钥获取私钥对象
+    encPrivateKey := "priSPKj7fAxnFPKKwd1Y6Sd6nEXtA44CrKWEGZaothUQ3jwqrL"
+    priManager, err := GetPrivateKeyManagerByPrivateKey(encPrivateKey)
+    if err != nil {
+        return err
+    }
 ```
 
 + **解析对象**

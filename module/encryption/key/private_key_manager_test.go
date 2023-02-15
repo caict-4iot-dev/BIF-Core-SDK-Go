@@ -35,3 +35,27 @@ func TestGetRawPrivateKey(t *testing.T) {
 	}
 	fmt.Println(hex.EncodeToString(rawPrivateKey))
 }
+
+func TestGetPrivateKeyManager(t *testing.T) {
+	priManager, err := GetPrivateKeyManager(ED25519)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("EncPrivateKey: ", priManager.EncPrivateKey)
+	fmt.Println("RawPrivateKey: ", hex.EncodeToString(priManager.RawPrivateKey))
+	fmt.Println("RawPublicKey: ", hex.EncodeToString(priManager.RawPublicKey))
+	fmt.Println("TypeKey: ", priManager.TypeKey)
+}
+
+func TestGetPrivateKeyManagerByPrivateKey(t *testing.T) {
+	encPrivateKey := "priSPKj7fAxnFPKKwd1Y6Sd6nEXtA44CrKWEGZaothUQ3jwqrL"
+	priManager, err := GetPrivateKeyManagerByPrivateKey(encPrivateKey)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("EncPrivateKey: ", priManager.EncPrivateKey)
+	fmt.Println("RawPrivateKey: ", hex.EncodeToString(priManager.RawPrivateKey))
+	fmt.Println("RawPublicKey: ", hex.EncodeToString(priManager.RawPublicKey))
+	fmt.Println("TypeKey: ", priManager.TypeKey)
+}
