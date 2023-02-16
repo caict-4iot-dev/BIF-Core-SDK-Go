@@ -189,14 +189,14 @@
 ```go
     // 公钥对象构造
     encPublicKey := "b06566ef131e8b1d223f5c3e89558de82b888c1cd5fa0d6c940458e9f6309040cfb28f"
-	publicKeyManager, err := GetKeyManagerByPublicKey(encPublicKey)
+	publicKeyManager, err := GetPublicKeyManagerByPublicKey(encPublicKey)
 ```
 
 + **获取账号地址**
 
 ```go
     encPublicKey := "b06566ef131e8b1d223f5c3e89558de82b888c1cd5fa0d6c940458e9f6309040cfb28f"
-	publicKeyManager, err := GetKeyManagerByPublicKey(encPublicKey)
+	publicKeyManager, err := GetPublicKeyManagerByPublicKey(encPublicKey)
 	if err != nil {
 		t.Error(err)
 	}
