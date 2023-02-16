@@ -20,7 +20,17 @@ func TestGetPublicKeyManagerEd25519(t *testing.T) {
 	fmt.Println("EncPublicKey: ", publicKeyManager.EncPublicKey)
 	fmt.Println("EncAddress: ", publicKeyManager.EncAddress)
 }
+func TestGetPublicKeyManagerByPublicKey(t *testing.T) {
 
+	encPublicKey := "b06566ef131e8b1d223f5c3e89558de82b888c1cd5fa0d6c940458e9f6309040cfb28f"
+	publicKeyManager, err := GetPublicKeyManagerByPublicKey(encPublicKey)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("EncPublicKey: ", publicKeyManager.EncPublicKey)
+	fmt.Println("EncAddress: ", publicKeyManager.EncAddress)
+}
 func TestGetPublicKeyManagerSm2(t *testing.T) {
 
 	// did:bid:zfAKvFU7N6SazT3DsDG8YMZ13oxFF9ba
