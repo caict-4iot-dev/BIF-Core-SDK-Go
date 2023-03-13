@@ -11,7 +11,7 @@ type BIFContractCreateRequest struct {
 	FeeLimit      int64  `json:"fee_limit"`       // 可选，交易花费的手续费，默认1000000L
 	PrivateKey    string `json:"private_key"`     // 必填，交易源账户私钥
 	CeilLedgerSeq int64  `json:"ceil_ledger_seq"` // 可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
-	Metadata      string `json:"metadata"`        // 可选，用户自定义给交易的备注，16进制格式
+	Remarks       string `json:"metadata"`        // 可选，用户自定义给交易的备注，16进制格式
 	InitBalance   int64  `json:"init_balance"`    // 必填，给合约账户的初始化星火令，单位PT，1 星火令 = 10^8 PT, 大小限制[1, Long.MAX_VALUE]
 	Type          int    `json:"type"`            // 选填，合约的类型，默认是0 , 0: javascript，1 :evm 。
 	Payload       string `json:"payload"`         // 必填，对应语种的合约代码
@@ -45,7 +45,7 @@ type BIFContractInvokeRequest struct {
 	FeeLimit        int64  `json:"fee_limit"`        // 可选，交易花费的手续费，默认1000000L
 	PrivateKey      string `json:"private_key"`      // 必填，交易源账户私钥
 	CeilLedgerSeq   int64  `json:"ceil_ledger_seq"`  // 可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
-	Metadata        string `json:"metadata"`         // 可选，用户自定义给交易的备注，16进制格式
+	Remarks         string `json:"metadata"`         // 可选，用户自定义给交易的备注，16进制格式
 	ContractAddress string `json:"contract_address"` // 必填，合约账户地址
 	BIFAmount       int64  `json:"bif_amount"`       // 必填，转账金额
 	Input           string `json:"input"`            // 选填，待触发的合约的main()入参

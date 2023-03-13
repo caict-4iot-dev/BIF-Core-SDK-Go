@@ -22,6 +22,11 @@ func TestGeneratePrivateKeys(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
 	fmt.Println("encPrivateKey:", encPrivateKey)
+	encPrivateKeyNoKeyType, err := GeneratePrivateKeysNoKeyType(mnemonic, hdPaths)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("encPrivateKeyNoKeyType:", encPrivateKeyNoKeyType)
+
 }

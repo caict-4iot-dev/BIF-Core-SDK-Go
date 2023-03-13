@@ -305,7 +305,7 @@ func (cs *ContractService) ContractInvoke(r request.BIFContractInvokeRequest) re
 		GasPrice:         r.GasPrice,
 		Operation:        bifAccountActivateOperation,
 		CeilLedgerSeq:    r.CeilLedgerSeq,
-		Remarks:          r.Metadata,
+		Remarks:          r.Remarks,
 		SenderPrivateKey: r.PrivateKey,
 	}
 
@@ -381,7 +381,7 @@ func (cs *ContractService) ContractCreate(r request.BIFContractCreateRequest) re
 		GasPrice:         r.GasPrice,
 		Operation:        contractCreateOperation,
 		CeilLedgerSeq:    r.CeilLedgerSeq,
-		Remarks:          r.Metadata,
+		Remarks:          r.Remarks,
 		SenderPrivateKey: r.PrivateKey,
 	}
 

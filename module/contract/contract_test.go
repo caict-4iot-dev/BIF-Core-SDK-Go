@@ -65,7 +65,8 @@ func TestCheckContractAddress(t *testing.T) {
 func TestContractQuery(t *testing.T) {
 	bs := GetContractInstance(SDK_INSTANCE_URL)
 	var r request.BIFContractCallRequest
-	r.ContractAddress = "did:bid:efWVypEKTQoVTunsdBDw8rp4uoG5Lsy5"
+	r.ContractAddress = "did:bid:efRH1Lbsuqwc6jRw3hK4H5Hp2RhHnryS"
+	r.Input = "{\"method\": \"getNodeCount\",\"params\": {\"roleType\": \"validator\" }}"
 	res := bs.ContractQuery(r)
 	if res.ErrorCode != 0 {
 		t.Error(res.ErrorDesc)
@@ -90,7 +91,7 @@ func TestContractInvoke(t *testing.T) {
 	r.PrivateKey = senderPrivateKey
 	r.ContractAddress = contractAddress
 	r.BIFAmount = 1
-	r.Metadata = "contract invoke"
+	r.Remarks = "contract invoke"
 
 	res := bs.ContractInvoke(r)
 	if res.ErrorCode != 0 {
@@ -113,7 +114,7 @@ func TestContractCreate(t *testing.T) {
 	payload := "\"use strict\"; function init(bar){return;} function main(input){let para = JSON.parse(input);if(para.do_foo){let x = {'hello' : 'world'};}} function query(input){return input;}"
 	r.SenderAddress = senderAddress
 	r.PrivateKey = senderPrivateKey
-	r.Metadata = "create contract"
+	r.Remarks = "create contract"
 	r.Payload = payload
 	r.InitBalance = 1
 	r.Type = 0

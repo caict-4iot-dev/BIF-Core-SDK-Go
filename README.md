@@ -228,7 +228,7 @@
     }
 
     // 验签
-    isOK := key.Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg, ED25519)
+    isOK := key.Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg)
     if !isOK {
         return errors.New("verify sign message is failed")
     }
@@ -246,7 +246,7 @@
 
 | 参数          | 类型    | 描述                     |
 | ------------- | ------- | ------------------------ |
-| encPrivateKey | string  | 待存储的密钥，可为null   |
+| encPrivateKey | string  | 待存储的密钥   |
 | password      | string  | 口令                     |
 | n             | int | CPU消耗参数，必填且大于1 |
 | r             | int | 内存消息参数，必填       |
@@ -352,12 +352,18 @@
     mnemonicStr := "style orchard science puppy place differ benefit thing wrap type build scare"
     hdPaths := "m/44'/526'/1'/0/0"
     keyType := key.ED25519
-    encPrivateKey, err := mnemonic.GeneratePrivateKeys(mnemonicStr, hdPaths, keyType)
+    encPrivateKey, err := GeneratePrivateKeys(mnemonicStr, hdPaths, keyType)
     if err != nil {
-        return err
+        t.Error(err)
     }
     
     fmt.Println("encPrivateKey:", encPrivateKey)
+	
+    encPrivateKeyNoKeyType, err := GeneratePrivateKeysNoKeyType(mnemonic, hdPaths)
+    if err != nil {
+        t.Error(err)
+    }
+    fmt.Println("encPrivateKeyNoKeyType:", encPrivateKeyNoKeyType)
 ```
 
 ## 1.3 账户服务接口列表
@@ -1818,6 +1824,16 @@ BIFSubmit(r request.BIFTransactionSubmitRequest) response.BIFTransactionSubmitRe
 > 示例
 
 ```go
+    //此处需要先转换blob格式
+    blob, err := hex.DecodeString(transactionBlob)
+        if err != nil {
+        t.Error(err)
+	}
+    // 然后签名
+    signData, err := key.Sign([]byte(senderPrivateKey), []byte(blob))
+    if err != nil {
+        t.Error(err)
+    }
     submitRequest := request.BIFTransactionSubmitRequest{
         Serialization: hex.EncodeToString(blob),
         SignData:      hex.EncodeToString(signData),

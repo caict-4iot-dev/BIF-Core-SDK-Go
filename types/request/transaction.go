@@ -5,10 +5,9 @@ type BIFTransactionGasSendRequest struct {
 	SenderAddress string `json:"sender_address"`  // 必填，交易源账号，即交易的发起方
 	PrivateKey    string `json:"private_key"`     // 必填，交易源账户私钥
 	CeilLedgerSeq int64  `json:"ceil_ledger_seq"` // 可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
-	Metadata      string `json:"metadata"`        // 可选，用户自定义给交易的备注，16进制格式
 	DestAddress   string `json:"dest_address"`    // 必填，发起方地址
 	Amount        int64  `json:"amount"`          // 必填，转账金额
-	Remarks       string `json:"remarks"`
+	Remarks       string `json:"remarks"`         // 可选，用户自定义给交易的备注，16进制格式
 	FeeLimit      int64  `json:"fee_limit"`
 	GasPrice      int64  `json:"gas_price"`
 }

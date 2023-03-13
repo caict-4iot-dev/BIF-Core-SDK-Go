@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
+	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/utils/base"
 	"io"
 	mrand "math/rand"
 	"strconv"
@@ -30,13 +31,27 @@ type ScryptParams struct {
 func GenerateKeyStore(encPrivateKey string, password string, n int, r int, p int, version int) (string, KeyStore) {
 
 	var keyStore KeyStore
+	dkLen := 32
 	rand := mrand.Intn(10000000)
 	randStr := strconv.Itoa(rand)
-	key, err := scrypt.Key([]byte(password), []byte(randStr), n, r, p, version)
+	key, err := scrypt.Key([]byte(password), []byte(randStr), n, r, p, dkLen)
 	if err != nil {
 		return "", keyStore
 	}
-	publicKeyManager, err := GetPublicKeyManager([]byte(encPrivateKey), ED25519)
+	if encPrivateKey == "" {
+		return "", keyStore
+	}
+	skeyTmp := base.Base58Decode([]byte(encPrivateKey))
+	var keyType int
+	switch skeyTmp[3] {
+	case ED25519_VALUE:
+		keyType = ED25519
+		break
+	case SM2_VALUE:
+		keyType = SM2
+		break
+	}
+	publicKeyManager, err := GetPublicKeyManager([]byte(encPrivateKey), keyType)
 	if err != nil {
 		return "", keyStore
 	}
@@ -80,7 +95,7 @@ func AESEncrypt(key []byte, text string) (string, string) {
 	stream := cipher.NewCFBEncrypter(block, iv)
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
 
-	return hex.EncodeToString(ciphertext), hex.EncodeToString(iv)
+	return hex.EncodeToString(ciphertext[aes.BlockSize:]), hex.EncodeToString(iv)
 }
 
 // AESDecrypt Decrypt from base64 to decrypted string

@@ -357,6 +357,17 @@ func (as *AccountService) SetPrivilege(r request.BIFAccountSetPrivilegeRequest) 
 			BIFBaseResponse: exception.PRIVATEKEY_NULL_ERROR,
 		}
 	}
+
+	if r.FeeLimit < common.INIT_ZERO {
+		return response.BIFAccountSetPrivilegeResponse{
+			BIFBaseResponse: exception.INVALID_FEELIMIT_ERROR,
+		}
+	}
+	if r.GasPrice < common.INIT_ZERO {
+		return response.BIFAccountSetPrivilegeResponse{
+			BIFBaseResponse: exception.INVALID_GAS_AMOUNT_ERROR,
+		}
+	}
 	if r.FeeLimit == common.INIT_ZERO {
 		r.FeeLimit = common.FEE_LIMIT
 	}

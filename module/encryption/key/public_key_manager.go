@@ -162,8 +162,23 @@ func encAddressValid(encAddress string) error {
 	return nil
 }
 
-func Verify(encPublicKey []byte, msg []byte, signMsg []byte, keyType int) bool {
-
+func Verify(encPublicKey []byte, msg []byte, signMsg []byte) bool {
+	pblicKeyHex, err := hex.DecodeString(string(encPublicKey))
+	if err != nil {
+		return false
+	}
+	var keyType = ED25519
+	// 判断算法类型
+	if pblicKeyHex[1] == ED25519_VALUE {
+		keyType = ED25519
+	} else if pblicKeyHex[1] == SM2_VALUE {
+		keyType = SM2
+	} else {
+		return false
+	}
+	if pblicKeyHex[2] != BASE_58_VALUE {
+		return false
+	}
 	var isOK bool
 	rawPublicKey := GetRawPublicKey(encPublicKey)
 	switch keyType {
@@ -209,6 +224,7 @@ func GetPublicKeyManagerByPublicKey(encPublicKey string) (*PublicKeyManager, err
 	var keyManager PublicKeyManager
 	keyManager.EncPublicKey = encPublicKey
 	keyManager.EncAddress = encAddress
+	keyManager.RawPublicKey = publicKey
 
 	return &keyManager, nil
 }

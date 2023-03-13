@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/request"
+	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/response"
 	"testing"
 )
 
@@ -177,6 +178,47 @@ func TestGetAccountPriv(t *testing.T) {
 		Address: "did:bid:effMzw4pjqgVxpFZCQ3fVWN5n7USpRYu",
 	}
 	res := as.GetAccountPriv(r)
+	if res.ErrorCode != 0 {
+		t.Error(res.ErrorDesc)
+	}
+
+	dataByte, err := json.Marshal(res)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("res: ", string(dataByte))
+}
+
+func TestSetPrivilegeTemp(t *testing.T) {
+
+	as := GetAccountInstance(SDK_INSTANCE_URL)
+	var req1 request.BIFAccountSetPrivilegeRequest
+	var signers []response.BIFSigner
+	var singer1 response.BIFSigner
+	singer1.Address = "did:bid:efijkZYAZoSXDnDEZoGEaSkNRWLPFBhB"
+	singer1.Weight = 8
+	var singer2 response.BIFSigner
+	singer2.Address = "did:bid:efAsXt5zM2Hsq6wCYRMZBS5Q9HvG2EmK"
+	singer2.Weight = 8
+	signers = append(signers, singer1)
+	signers = append(signers, singer2)
+	var typeThresholds []response.BIFTypeThreshold
+	var typeThreshold1 response.BIFTypeThreshold
+	typeThreshold1.Threshold = 1
+	typeThreshold1.Type = 5
+	typeThresholds = append(typeThresholds, typeThreshold1)
+	req1.SenderAddress = "did:bid:effMzw4pjqgVxpFZCQ3fVWN5n7USpRYu"
+	req1.PrivateKey = "priSPKe86UJsnJ3WTDtLViP5ii8WTZKCXRMJmmqkDBWHq1eyMy"
+	req1.Remarks = "set privilege"
+	req1.CeilLedgerSeq = 0
+	req1.FeeLimit = 200000
+	req1.GasPrice = 1
+	req1.TxThreshold = "0"
+	req1.MasterWeight = "12"
+	req1.Signers = signers
+	req1.TypeThresholds = typeThresholds
+	res := as.SetPrivilege(req1)
 	if res.ErrorCode != 0 {
 		t.Error(res.ErrorDesc)
 	}

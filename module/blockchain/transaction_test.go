@@ -36,7 +36,7 @@ func TestGasSend(t *testing.T) {
 	r.SenderAddress = "did:bid:zf2AoXhJsmr1aaUMxhnKeMAX42G9Ck526"
 	r.PrivateKey = "priSrrk31MhNGEGAmnmZPH5K8fnuqTKLuLMvWd6E7TEdEjWkcQ"
 	r.DestAddress = "did:bid:efzewQxg38x2Tmb1cpxSC1ZWwMZUxUeV"
-	r.Metadata = "gas send"
+	r.Remarks = "gas send"
 	r.Amount = 100000
 
 	res := ts.GasSend(r)
@@ -97,7 +97,7 @@ func TestPrivateContractCall(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	
+
 	fmt.Println("res: ", string(dataByte))
 }
 
@@ -118,6 +118,8 @@ func TestEvaluateFee(t *testing.T) {
 	r.SourceAddress = senderAddresss
 	r.Operation = operation
 	r.SignatureNumber = 1
+	r.Remarks = "evaluate fee"
+	r.GasPrice = 1
 
 	res := ts.EvaluateFee(r)
 	if res.ErrorCode != 0 {

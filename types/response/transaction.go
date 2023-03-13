@@ -157,7 +157,7 @@ type BIFTransactionCacheResult struct {
 
 type BIFTransactionCacheInfo struct {
 	Hash         string             `json:"hash"`
-	IncomingTime string             `json:"incoming_time"`
+	IncomingTime int64              `json:"incoming_time"`
 	Status       string             `json:"status"`
 	Transaction  BIFTransactionInfo `json:"transaction"`
 }

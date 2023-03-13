@@ -400,7 +400,7 @@ func (ts *TransactionService) GetTransactionInfo(r request.BIFTransactionGetInfo
 	return res
 }
 
-//Deprecated
+// Deprecated
 func (ts *TransactionService) PrivateContractCreate(r request.BIFTransactionPrivateContractCreateRequest) response.BIFTransactionPrivateContractCreateResponse {
 
 	if !key.IsAddressValid(r.SenderAddress) {
@@ -466,7 +466,7 @@ func (ts *TransactionService) PrivateContractCreate(r request.BIFTransactionPriv
 	}
 }
 
-//Deprecated
+// Deprecated
 func (ts *TransactionService) PrivateContractCall(r request.BIFTransactionPrivateContractCallRequest) response.BIFTransactionPrivateContractCallResponse {
 
 	if !key.IsAddressValid(r.SenderAddress) {
@@ -581,19 +581,36 @@ func (ts *TransactionService) EvaluateFee(r request.BIFTransactionEvaluateFeeReq
 			BIFBaseResponse: bifBaseResponse,
 		}
 	}
-	transaction := proto.Transaction{
+	if r.FeeLimit < common.INIT_ZERO {
+		return response.BIFTransactionEvaluateFeeResponse{
+			BIFBaseResponse: exception.INVALID_FEELIMIT_ERROR,
+		}
+	}
+	if r.GasPrice < common.INIT_ZERO {
+		return response.BIFTransactionEvaluateFeeResponse{
+			BIFBaseResponse: exception.INVALID_GAS_AMOUNT_ERROR,
+		}
+	}
+	if r.FeeLimit == common.INIT_ZERO {
+		r.FeeLimit = common.FEE_LIMIT
+	}
+	if r.GasPrice == common.INIT_ZERO {
+		r.GasPrice = common.GAS_PRICE
+	}
+	dataTemp := hex.EncodeToString([]byte(r.Remarks))
+	transaction := proto.EvaluateFeeTransaction{
 		SourceAddress: r.SourceAddress,
 		Nonce:         nonce + 1,
-		FeeLimit:      common.FEE_LIMIT,
-		GasPrice:      common.GAS_PRICE,
-		Metadata:      []byte(r.Metadata),
+		FeeLimit:      r.FeeLimit,
+		GasPrice:      r.GasPrice,
+		Metadata:      dataTemp,
 		Operations:    operations,
 	}
 
-	transactionItem := make(map[string]proto.Transaction)
+	transactionItem := make(map[string]proto.EvaluateFeeTransaction)
 	transactionItem["transaction_json"] = transaction
 	testTransactionRequest := make(map[string]interface{})
-	transactionItems := make([]map[string]proto.Transaction, 0)
+	transactionItems := make([]map[string]proto.EvaluateFeeTransaction, 0)
 	transactionItems = append(transactionItems, transactionItem)
 	testTransactionRequest["items"] = transactionItems
 	requestByte, err := json.Marshal(testTransactionRequest)

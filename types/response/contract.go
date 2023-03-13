@@ -69,8 +69,13 @@ type QueryRetsJsResult struct {
 }
 
 type QueryJsResult struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	Type  string          `json:"type,omitempty"`
+	Value string          `json:"value,omitempty"`
+	Data  QueryDataResult `json:"data,omitempty"`
+}
+
+type QueryDataResult struct {
+	NodeCount string `json:"nodeCount,omitempty"`
 }
 
 // BIFContractCallEvmResponse evm合约查询接口响应体

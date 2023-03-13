@@ -72,8 +72,9 @@ type BIFContractInvokeOperation struct {
 // BIFTransactionEvaluateFeeRequest 交易费用评估请求体
 type BIFTransactionEvaluateFeeRequest struct {
 	SourceAddress   string      // 模拟交易的原地址
-	Nonce           int64       // 在原账号基础上加1
 	SignatureNumber int64       // 签名个数，默认为1；不填写系统会设置为1
-	Metadata        string      // 可选，签名个数
+	Remarks         string      // 可选，签名个数
 	Operation       interface{} // 操作列表
+	GasPrice        int64
+	FeeLimit        int64
 }

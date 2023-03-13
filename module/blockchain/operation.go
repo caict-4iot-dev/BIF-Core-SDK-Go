@@ -283,17 +283,20 @@ func (os *OperationService) SetPrivilegeOperation(r request.BIFAccountSetPrivile
 	}
 	signers := make([]*proto.Signer, len(r.Signers))
 	for _, v := range r.Signers {
-		var signer *proto.Signer
+		var signer proto.Signer
 		signer.Address = v.Address
 		signer.Weight = v.Weight
-		signers = append(signers, signer)
+		signers = append(signers, &signer)
 	}
+	signers = append(signers[len(r.Signers):])
 	TypeThresholds := make([]*proto.OperationTypeThreshold, len(r.TypeThresholds))
 	for _, v := range r.TypeThresholds {
 		var typeThreshold proto.OperationTypeThreshold
 		typeThreshold.Threshold = v.Threshold
 		typeThreshold.Type = (proto.Operation_Type)(v.Type)
+		TypeThresholds = append(TypeThresholds, &typeThreshold)
 	}
+	TypeThresholds = append(TypeThresholds[len(r.TypeThresholds):])
 	operation := &proto.Operation{
 		SourceAddress: r.SourceAddress,
 		Metadata:      []byte(r.Metadata),

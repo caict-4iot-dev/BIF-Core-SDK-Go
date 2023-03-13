@@ -30,6 +30,7 @@ func TestGetPublicKeyManagerByPublicKey(t *testing.T) {
 
 	fmt.Println("EncPublicKey: ", publicKeyManager.EncPublicKey)
 	fmt.Println("EncAddress: ", publicKeyManager.EncAddress)
+	fmt.Println("rawPublicKey", publicKeyManager.RawPublicKey)
 }
 func TestGetPublicKeyManagerSm2(t *testing.T) {
 
@@ -53,21 +54,20 @@ func TestGetPublicKeyManagerSm2(t *testing.T) {
 }
 
 func TestSignEd25519(t *testing.T) {
-	encPrivateKey := "priSPKhTMRa7SsQLc4wXUDrEZW5wSeKN68Xy5LuCYQmndS75SZ"
+	encPrivateKey := "priSPKt8AFKhaWpcYKZxGFJfpZJahKTpDrUwDV4k7myHkLzRje"
 	msg := "hello word"
 	// 签名
 	signMsg, err := Sign([]byte(encPrivateKey), []byte(msg))
 	if err != nil {
 		t.Error(err)
 	}
-
 	publicKeyManager, err := GetPublicKeyManager([]byte(encPrivateKey), ED25519)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// 验签
-	isOK := Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg, ED25519)
+	isOK := Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg)
 	if !isOK {
 		t.Error("verify sign message is failed")
 	}
@@ -91,10 +91,36 @@ func TestSignSm2(t *testing.T) {
 	}
 
 	// 验签
-	isOK := Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg, SM2)
+	isOK := Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg)
 	if !isOK {
 		t.Error("verify sign message is failed")
 	}
 
 	fmt.Println("result:", isOK)
+}
+
+func TestVerify_other(t *testing.T) {
+	encPrivateKey := "priSPKt8AFKhaWpcYKZxGFJfpZJahKTpDrUwDV4k7myHkLzRje"
+	msg := "0a286469643a6269643a65667a51313974516d5a56384256365045374868756f563866386264754e76591001223f0807523b0a286469643a6269643a65664e69515045476e68545071614661746f463170397767723135325036384610011a0d7b22626172223a22666f6f227d2a080123456789abcdef30c0843d3801"
+	signMsg := "59e2d313be2016a35724c6653e488cd938551726a9b475ed44f9650001db7ba65c6acc4ca375b841f6bb02a1f29bb4085083ff516a3d336872840b655f857a05"
+	publicKeyManager, err := GetPublicKeyManager([]byte(encPrivateKey), ED25519)
+	fmt.Println(err)
+	signMsgByte, err := hex.DecodeString(signMsg)
+	msgByte, err := hex.DecodeString(msg)
+	isOK := Verify([]byte(publicKeyManager.EncPublicKey), msgByte, signMsgByte)
+	fmt.Println(isOK)
+}
+
+func TestVerify_mismatching(t *testing.T) {
+	encPrivateKey := "priSPKt8AFKhaWpcYKZxGFJfpZJahKTpDrUwDV4k7myHkLzRje"
+	msg := "0a286469643a6269643a65667a51313974516d5a56384256365045374868756f563866386264754e76591001223f0807523b0a286469643a6269643a65664e69515045476e68545071614661746f463170397767723135325036384610011a0d7b22626172223a22666f6f227d2a080123456789abcdef30c0843d3801"
+	//signMsg := "59e2d313be2016a35724c6653e488cd938551726a9b475ed44f9650001db7ba65c6acc4ca375b841f6bb02a1f29bb4085083ff516a3d336872840b655f857a05"
+	signMsg, err := Sign([]byte(encPrivateKey), []byte(msg))
+	keyPair, err := GetBidAndKeyPairBySM2()
+	fmt.Println(err)
+	publicKeyErr := keyPair.GetEncPublicKey()
+	//publicKeyManager, err := GetPublicKeyManager([]byte(encPrivateKey), ED25519)
+
+	isOK := Verify([]byte(publicKeyErr), []byte(msg), signMsg)
+	fmt.Println(isOK)
 }
