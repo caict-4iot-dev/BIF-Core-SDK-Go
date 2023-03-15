@@ -70,7 +70,7 @@ type QueryRetsJsResult struct {
 
 type QueryJsResult struct {
 	Type  string          `json:"type"`
-	Value string          `json:"value"`
+	Value interface{}     `json:"value"`
 	Data  QueryDataResult `json:"data"`
 }
 
