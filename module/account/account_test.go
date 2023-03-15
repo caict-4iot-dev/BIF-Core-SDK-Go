@@ -9,7 +9,7 @@ import (
 )
 
 // SDK_INSTANCE_URL 链访问地址
-const SDK_INSTANCE_URL = "http://test-bif-core.xinghuo.space"
+const SDK_INSTANCE_URL = "http://test.bifcore.bitfactory.cn"
 
 func TestCreateAccount(t *testing.T) {
 

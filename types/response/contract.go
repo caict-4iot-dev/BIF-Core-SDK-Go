@@ -69,9 +69,9 @@ type QueryRetsJsResult struct {
 }
 
 type QueryJsResult struct {
-	Type  string          `json:"type,omitempty"`
-	Value string          `json:"value,omitempty"`
-	Data  QueryDataResult `json:"data,omitempty"`
+	Type  string          `json:"type"`
+	Value string          `json:"value"`
+	Data  QueryDataResult `json:"data"`
 }
 
 type QueryDataResult struct {

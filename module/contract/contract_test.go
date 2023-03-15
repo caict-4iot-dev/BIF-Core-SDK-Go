@@ -9,7 +9,7 @@ import (
 )
 
 // SDK_INSTANCE_URL 链访问地址
-const SDK_INSTANCE_URL = "http://test-bif-core.xinghuo.space"
+const SDK_INSTANCE_URL = "http://test.bifcore.bitfactory.cn"
 
 func TestGetContractInfo(t *testing.T) {
 	bs := GetContractInstance(SDK_INSTANCE_URL)
@@ -65,7 +65,7 @@ func TestCheckContractAddress(t *testing.T) {
 func TestContractQuery(t *testing.T) {
 	bs := GetContractInstance(SDK_INSTANCE_URL)
 	var r request.BIFContractCallRequest
-	r.ContractAddress = "did:bid:efRH1Lbsuqwc6jRw3hK4H5Hp2RhHnryS"
+	r.ContractAddress = "did:bid:efzHmBXP7jJPriFYnT7W8fz7CnQPZgkA"
 	r.Input = "{\"method\": \"getNodeCount\",\"params\": {\"roleType\": \"validator\" }}"
 	res := bs.ContractQuery(r)
 	if res.ErrorCode != 0 {

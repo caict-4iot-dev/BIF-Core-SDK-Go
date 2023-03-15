@@ -147,6 +147,16 @@ func (cs *ContractService) ContractQuery(r request.BIFContractCallRequest) respo
 			BIFBaseResponse: exception.SOURCEADDRESS_EQUAL_CONTRACTADDRESS_ERROR,
 		}
 	}
+	if r.FeeLimit < common.INIT_ZERO {
+		return response.BIFContractCallResponse{
+			BIFBaseResponse: exception.INVALID_FEELIMIT_ERROR,
+		}
+	}
+	if r.GasPrice < common.INIT_ZERO {
+		return response.BIFContractCallResponse{
+			BIFBaseResponse: exception.INVALID_GAS_AMOUNT_ERROR,
+		}
+	}
 	if r.FeeLimit == common.INIT_ZERO {
 		r.FeeLimit = common.FEE_LIMIT
 	}
