@@ -188,26 +188,21 @@
 
 ```go
     // 公钥对象构造
-    publicKeyManager, err := key.GetPublicKeyManager([]byte(privateKeyManager.EncPrivateKey), key.ED25519)
-    if err != nil {
-        return err
-    }
+    encPublicKey := "b06566ef131e8b1d223f5c3e89558de82b888c1cd5fa0d6c940458e9f6309040cfb28f"
+	publicKeyManager, err := GetPublicKeyManagerByPublicKey(encPublicKey)
 ```
 
 + **获取账号地址**
 
 ```go
-    encPrivateKey := "priSrrk31MhNGEGAmnmZPH5K8fnuqTKLuLMvWd6E7TEdEjWkcQ"
-    publicKeyManager, err := key.GetPublicKeyManager([]byte(encPrivateKey), key.ED25519)
-    if err != nil {
-        return err
-    }
-    // 原生公钥
-    rawPublicKey := publicKeyManager.RawPublicKey
-    // 星火公钥
-    encPublicKey := publicKeyManager.EncPublicKey
-    // 星火地址
-    encAddress := publicKeyManager.EncAddress
+    encPublicKey := "b06566ef131e8b1d223f5c3e89558de82b888c1cd5fa0d6c940458e9f6309040cfb28f"
+	publicKeyManager, err := GetPublicKeyManagerByPublicKey(encPublicKey)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("EncPublicKey: ", publicKeyManager.EncPublicKey)
+	fmt.Println("EncAddress: ", publicKeyManager.EncAddress)
 ```
 
 + **账号地址校验**
