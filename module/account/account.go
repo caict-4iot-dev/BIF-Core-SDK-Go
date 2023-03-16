@@ -59,7 +59,7 @@ func (as *AccountService) CreateAccount(r request.BIFCreateAccountRequest) respo
 			BIFBaseResponse: exception.INVALID_DESTADDRESS_ERROR,
 		}
 	}
-	if r.InitBalance == 0 || r.InitBalance <= common.INIT_ZERO {
+	if r.InitBalance < common.INIT_ZERO {
 		return response.BIFCreateAccountResponse{
 			BIFBaseResponse: exception.INVALID_INITBALANCE_ERROR,
 		}

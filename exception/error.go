@@ -19,7 +19,7 @@ var (
 	INVALID_DESTADDRESS_ERROR = response.BIFBaseResponse{11003, "Invalid destAddress"}
 
 	// INVALID_INITBALANCE_ERROR ...
-	INVALID_INITBALANCE_ERROR = response.BIFBaseResponse{11004, "InitBalance must be between 1 and Long.MAX_VALUE"}
+	INVALID_INITBALANCE_ERROR = response.BIFBaseResponse{11004, "InitBalance must be between 0 and Long.MAX_VALUE"}
 
 	// SOURCEADDRESS_EQUAL_DESTADDRESS_ERROR ...
 	SOURCEADDRESS_EQUAL_DESTADDRESS_ERROR = response.BIFBaseResponse{11005, "SourceAddress cannot be equal to destAddress"}

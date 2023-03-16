@@ -341,7 +341,7 @@ func (cs *ContractService) ContractCreate(r request.BIFContractCreateRequest) re
 			BIFBaseResponse: exception.INVALID_ADDRESS_ERROR,
 		}
 	}
-	if r.InitBalance != 0 && r.InitBalance <= common.INIT_ZERO {
+	if r.InitBalance < common.INIT_ZERO {
 		return response.BIFContractCreateResponse{
 			BIFBaseResponse: exception.INVALID_INITBALANCE_ERROR,
 		}
@@ -349,11 +349,6 @@ func (cs *ContractService) ContractCreate(r request.BIFContractCreateRequest) re
 	if r.Payload == "" {
 		return response.BIFContractCreateResponse{
 			BIFBaseResponse: exception.PAYLOAD_EMPTY_ERROR,
-		}
-	}
-	if r.InitBalance != 0 && r.InitBalance <= common.INIT_ZERO {
-		return response.BIFContractCreateResponse{
-			BIFBaseResponse: exception.INVALID_INITBALANCE_ERROR,
 		}
 	}
 	if r.PrivateKey == "" {

@@ -404,9 +404,9 @@
 | ceilLedgerSeq | int64   | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
 | remarks       | string | 选填，用户自定义给交易的备注                                 |
 | destAddress   | string | 必填，目标账户地址                                           |
-| initBalance   | int64   | 必填，初始化星火令，单位PT，1 星火令 = 10^8 PT, 大小(0, int64.MAX_VALUE] |
-| gasPrice      | int64   | 选填，打包费用 (单位是PT)，默认100L                          |
-| feeLimit      | int64   | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| initBalance   | int64   | 必填，初始化星火令，单位uXHT，1 星火令 = 10^8 uXHT, 大小[0, int64.MAX_VALUE] |
+| gasPrice      | int64   | 选填，打包费用 (单位是uXHT)，默认100L                        |
+| feeLimit      | int64   | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -417,14 +417,14 @@
 
 > 错误码
 
-| 异常                      | 错误码 | 描述                                             |
-| ------------------------- | ------ | ------------------------------------------------ |
-| INVALID_ADDRESS_ERROR     | 11006  | Invalid address                                  |
-| REQUEST_NULL_ERROR        | 12001  | Request parameter cannot be null                 |
-| PRIVATEKEY_NULL_ERROR     | 11057  | PrivateKeys cannot be empty                      |
-| INVALID_DESTADDRESS_ERROR | 11003  | Invalid destAddress                              |
-| INVALID_INITBALANCE_ERROR | 11004  | InitBalance must be between 1 and int64.MAX_VALUE |
-| SYSTEM_ERROR              | 20000  | System error                                     |
+| 异常                      | 错误码 | 描述                                              |
+| ------------------------- | ------ | ------------------------------------------------- |
+| INVALID_ADDRESS_ERROR     | 11006  | Invalid address                                   |
+| REQUEST_NULL_ERROR        | 12001  | Request parameter cannot be null                  |
+| PRIVATEKEY_NULL_ERROR     | 11057  | PrivateKeys cannot be empty                       |
+| INVALID_DESTADDRESS_ERROR | 11003  | Invalid destAddress                               |
+| INVALID_INITBALANCE_ERROR | 11004  | InitBalance must be between 0 and int64.MAX_VALUE |
+| SYSTEM_ERROR              | 20000  | System error                                      |
 
 
 > 示例
@@ -478,7 +478,7 @@
 | 参数    | 类型   | 描述                                           |
 | ------- | ------ | ---------------------------------------------- |
 | address | string | 账户地址                                       |
-| balance | int64   | 账户余额，单位PT，1 星火令 = 10^8 PT, 必须大于0 |
+| balance | int64   | 账户余额，单位uXHT，1 星火令 = 10^8 uXHT, 必须大于0 |
 | nonce   | int64   | 账户交易序列号，必须大于0                      |
 
 > 错误码
@@ -647,8 +647,8 @@
 | value         | string  | 必填，metadatas的内容，长度限制[0, 256000]                   |
 | version       | int64    | 选填，metadatas的版本                                        |
 | deleteFlag    | bool | 选填，是否删除remarks                                        |
-| gasPrice      | int64    | 选填，打包费用 (单位是PT)，默认100L                          |
-| feeLimit      | int64    | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | int64    | 选填，打包费用 (单位是uXHT)，默认100L                        |
+| feeLimit      | int64    | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -785,8 +785,8 @@
 | typeThreshold.type      | int64   | 操作类型，必须大于0                                          |
 | typeThreshold.threshold | int64   | 门限值，大小限制[0, int64.MAX_VALUE]                          |
 | masterWeight            | string | 选填                                                         |
-| gasPrice                | int64   | 选填，打包费用 (单位是PT)，默认100L                          |
-| feeLimit                | int64   | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice                | int64   | 选填，打包费用 (单位是uXHT)，默认100L                        |
+| feeLimit                | int64   | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -975,12 +975,12 @@
 | 参数          | 类型    | 描述                                                         |
 | ------------- | ------- | ------------------------------------------------------------ |
 | senderAddress | string  | 必填，交易源账号，即交易的发起方                             |
-| gasPrice      | int64    | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit      | int64    | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | int64    | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit      | int64    | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 | privateKey    | string  | 必填，交易源账户私钥                                         |
 | ceilLedgerSeq | int64    | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
 | remarks       | string  | 选填，用户自定义给交易的备注                                 |
-| initBalance   | int64    | 选填，给合约账户的初始化星火令，单位PT，1 星火令 = 10^8 PT, 大小限制[1, int64.MAX_VALUE] |
+| initBalance   | int64    | 选填，给合约账户的初始化星火令，单位uXHT，1 星火令 = 10^8 uXHT, 大小限制[0, int64.MAX_VALUE] |
 | type          | int | 选填，合约的类型，默认是0 , 0: javascript，1 :evm 。         |
 | payload       | string  | 必填，对应语种的合约代码                                     |
 | initInput     | string  | 选填，合约代码中init方法的入参                               |
@@ -994,15 +994,15 @@
 
 > 错误码
 
-| 异常                      | 错误码 | 描述                                             |
-| ------------------------- | ------ | ------------------------------------------------ |
-| INVALID_ADDRESS_ERROR     | 11006  | Invalid address                                  |
-| REQUEST_NULL_ERROR        | 12001  | Request parameter cannot be null                 |
-| PRIVATEKEY_NULL_ERROR     | 11057  | PrivateKeys cannot be empty                      |
-| INVALID_INITBALANCE_ERROR | 11004  | InitBalance must be between 1 and int64.MAX_VALUE |
-| PAYLOAD_EMPTY_ERROR       | 11044  | Payload cannot be empty                          |
+| 异常                      | 错误码 | 描述                                              |
+| ------------------------- | ------ | ------------------------------------------------- |
+| INVALID_ADDRESS_ERROR     | 11006  | Invalid address                                   |
+| REQUEST_NULL_ERROR        | 12001  | Request parameter cannot be null                  |
+| PRIVATEKEY_NULL_ERROR     | 11057  | PrivateKeys cannot be empty                       |
+| INVALID_INITBALANCE_ERROR | 11004  | InitBalance must be between 0 and int64.MAX_VALUE |
+| PAYLOAD_EMPTY_ERROR       | 11044  | Payload cannot be empty                           |
 | INVALID_FEELIMIT_ERROR    | 11050  | FeeLimit must be between 0 and int64.MAX_VALUE    |
-| SYSTEM_ERROR              | 20000  | System error                                     |
+| SYSTEM_ERROR              | 20000  | System error                                      |
 
 
 > 示例
@@ -1168,8 +1168,8 @@
 | sourceAddress   | string | 选填，合约触发账户地址                         |
 | contractAddress | string | 必填，合约账户地址                             |
 | input           | string | 选填，合约入参                                 |
-| gasPrice        | int64   | 选填，打包费用 (单位是PT)默认，默认100L        |
-| feeLimit        | int64   | 选填，交易花费的手续费(单位是PT)，默认1000000L |
+| gasPrice        | int64   | 选填，打包费用 (单位是uXHT)默认，默认100L      |
+| feeLimit        | int64   | 选填，交易花费的手续费(单位是uXHT)，默认1000000L |
 
 
 > 响应数据
@@ -1225,8 +1225,8 @@
 | 参数            | 类型   | 描述                                                         |
 | --------------- | ------ | ------------------------------------------------------------ |
 | senderAddress   | string | 必填，交易源账号，即交易的发起方                             |
-| gasPrice        | int64   | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit        | int64   | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice        | int64   | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit        | int64   | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 | privateKey      | string | 必填，交易源账户私钥                                         |
 | ceilLedgerSeq   | int64   | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
 | remarks         | string | 选填，用户自定义给交易的备注                                 |
@@ -1299,8 +1299,8 @@ BatchContractInvoke(r request.BIFBatchContractInvokeRequest) response.BIFContrac
 | 参数          | 类型                             | 描述                                                         |
 | ------------- | -------------------------------- | ------------------------------------------------------------ |
 | senderAddress | string                           | 必填，交易源账号，即交易的发起方                             |
-| gasPrice      | Long                             | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit      | Long                             | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | Long                             | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit      | Long                             | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 | privateKey    | String                           | 必填，交易源账户私钥                                         |
 | ceilLedgerSeq | Long                             | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
 | remarks       | String                           | 选填，用户自定义给交易的备注                                 |
@@ -1419,8 +1419,8 @@ bs := GetContractInstance(SDK_INSTANCE_URL)
 | remarks       | string | 选填，用户自定义给交易的备注                                 |
 | destAddress   | string | 必填，发起方地址                                             |
 | amount        | int64   | 必填，转账金额                                               |
-| gasPrice      | int64   | 选填，打包费用 (单位是PT)，默认100L                          |
-| feeLimit      | int64   | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | int64   | 选填，打包费用 (单位是uXHT)，默认100L                        |
+| feeLimit      | int64   | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -1491,8 +1491,8 @@ bs := GetContractInstance(SDK_INSTANCE_URL)
 | payload       | string   | 必填，对应语种的合约代码                                     |
 | from          | string   | 必填，发起方加密机公钥                                       |
 | to            | []string | 必填，接收方加密机公钥                                       |
-| gasPrice      | int64     | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit      | int64     | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | int64     | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit      | int64     | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -1565,8 +1565,8 @@ bs := GetContractInstance(SDK_INSTANCE_URL)
 | input         | string   | 必填，待触发的合约的main()入参                               |
 | from          | string   | 必填，发起方加密机公钥                                       |
 | to            | []string | 必填，接收方加密机公钥                                       |
-| gasPrice      | int64     | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit      | int64     | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | int64     | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit      | int64     | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 
 > 响应数据
 
@@ -1697,8 +1697,8 @@ bs := GetContractInstance(SDK_INSTANCE_URL)
 | signatureNumber | int                         | 选填，待签名者的数量，默认是1，大小限制[1, int.MAX_VALUE] |
 | remarks         | string                          | 选填，用户自定义给交易的备注                                 |
 | Operations       | []BIFBaseOperation | 必填，待提交的操作，不能为空                                 |
-| gasPrice        | int64                            | 选填，打包费用 (单位是PT)                                    |
-| feeLimit        | int64                            | 选填，交易花费的手续费(单位是PT)                             |
+| gasPrice        | int64                            | 选填，打包费用 (单位是uXHT)                                  |
+| feeLimit        | int64                            | 选填，交易花费的手续费(单位是uXHT)                           |
 
 #### BIFBaseOperation
 
@@ -2014,8 +2014,8 @@ BatchGasSend(r request.BIFBatchGasSendRequest) response.BIFTransactionGasSendRes
 | 参数          | 类型                      | 描述                                                         |
 | ------------- | ------------------------- | ------------------------------------------------------------ |
 | senderAddress | string                    | 必填，交易源账号，即交易的发起方                             |
-| gasPrice      | Long                      | 选填，打包费用 (单位是PT)默认，默认100L                      |
-| feeLimit      | Long                      | 选填，交易花费的手续费(单位是PT)，默认1000000L               |
+| gasPrice      | Long                      | 选填，打包费用 (单位是uXHT)默认，默认100L                    |
+| feeLimit      | Long                      | 选填，交易花费的手续费(单位是uXHT)，默认1000000L             |
 | privateKey    | String                    | 必填，交易源账户私钥                                         |
 | ceilLedgerSeq | Long                      | 选填，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效 |
 | remarks       | String                    | 选填，用户自定义给交易的备注                                 |

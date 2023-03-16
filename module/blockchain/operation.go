@@ -162,7 +162,7 @@ func (os *OperationService) ActivateOperation(r request.BIFAccountActivateOperat
 			BIFBaseResponse: exception.SOURCEADDRESS_EQUAL_DESTADDRESS_ERROR,
 		}
 	}
-	if r.InitBalance <= 0 {
+	if r.InitBalance < 0 {
 		return response.AccountActivateResponse{
 			BIFBaseResponse: exception.INVALID_INITBALANCE_ERROR,
 		}
@@ -370,7 +370,7 @@ func (os *OperationService) ContractCreateOperation(r request.BIFContractCreateO
 			BIFBaseResponse: exception.INVALID_SOURCEADDRESS_ERROR,
 		}
 	}
-	if r.InitBalance <= common.INIT_ZERO {
+	if r.InitBalance < common.INIT_ZERO {
 		return response.BIFContractCreateOperationResponse{
 			BIFBaseResponse: exception.INVALID_INITBALANCE_ERROR,
 		}
