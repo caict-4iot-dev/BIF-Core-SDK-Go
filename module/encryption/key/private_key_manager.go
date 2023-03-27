@@ -46,18 +46,21 @@ func GetPrivateKeyManager(keyType int) (*PrivateKeyManager, error) {
 		rawPublicKey = publicKey
 		typeKey = "ed25519"
 	case SM2:
-		privateKey, publicKey, err := sm2.GenerateKey(rand.Reader)
+		privateKey, _, err := sm2.GenerateKey(rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 		rawPrivateKey = privateKey.GetRawBytes()
-		rawPublicKey = publicKey.GetRawBytes()
 		typeKey = "sm2"
 	default:
 		return nil, errors.New("type does not exist")
 	}
 	encPrivateKey = GetEncPrivateKey(rawPrivateKey, keyType)
-
+	encPublicKey, err := GetEncPublicKey([]byte(encPrivateKey))
+	if err != nil {
+		return nil, err
+	}
+	rawPublicKey = GetRawPublicKey([]byte(encPublicKey))
 	var priManager PrivateKeyManager
 	priManager.RawPrivateKey = rawPrivateKey
 	priManager.EncPrivateKey = encPrivateKey
