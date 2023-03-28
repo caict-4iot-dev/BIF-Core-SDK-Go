@@ -61,7 +61,7 @@ type BIFContractCallJsResponse struct {
 }
 
 type BIFContractCallJsResult struct {
-	QueryRets []QueryRetsJsResult `json:"query_rets"` // 查询结果集
+	QueryRets []interface{} `json:"query_rets"` // 查询结果集
 }
 
 type QueryRetsJsResult struct {
@@ -85,7 +85,7 @@ type BIFContractCallEvmResponse struct {
 }
 
 type BIFContractCallEvmResult struct {
-	QueryRets []QueryRetsEvmResult `json:"query_rets"` // 查询结果集
+	QueryRets []interface{} `json:"query_rets"` // 查询结果集
 }
 
 type QueryRetsEvmResult struct {
