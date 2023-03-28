@@ -95,7 +95,7 @@ func AESEncrypt(key []byte, text string) (string, string) {
 	stream := cipher.NewCFBEncrypter(block, iv)
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
 
-	return hex.EncodeToString(ciphertext[aes.BlockSize:]), hex.EncodeToString(iv)
+	return hex.EncodeToString(ciphertext), hex.EncodeToString(iv)
 }
 
 // AESDecrypt Decrypt from base64 to decrypted string
