@@ -175,8 +175,9 @@
 ```go
     encPrivateKey := "priSPKhTMRa7SsQLc4wXUDrEZW5wSeKN68Xy5LuCYQmndS75SZ"
     msg := "hello word"
+    msgByte, err := hex.DecodeString(msg)
     // 签名
-    signMsg, err := key.Sign([]byte(encPrivateKey), []byte(msg))
+    signMsg, err := key.Sign([]byte(encPrivateKey), msgByte)
     if err != nil {
         return err
     }
@@ -217,8 +218,9 @@
 ```go
     encPrivateKey := "priSPKhTMRa7SsQLc4wXUDrEZW5wSeKN68Xy5LuCYQmndS75SZ"
     msg := "hello word"
+    msgByte, err := hex.DecodeString(msg)
     // 签名
-    signMsg, err := key.Sign([]byte(encPrivateKey), []byte(msg))
+    signMsg, err := key.Sign([]byte(encPrivateKey), msgByte)
     if err != nil {
         return err
     }
@@ -228,7 +230,7 @@
     }
 
     // 验签
-    isOK := key.Verify([]byte(publicKeyManager.EncPublicKey), []byte(msg), signMsg)
+    isOK := key.Verify([]byte(publicKeyManager.EncPublicKey), msgByte, signMsg)
     if !isOK {
         return errors.New("verify sign message is failed")
     }
@@ -1077,18 +1079,21 @@
 ```go
     bs := GetContractInstance(SDK_INSTANCE_URL)
     var r request.BIFContractGetInfoRequest
-    r.ContractAddress = "did:bid:efWVypEKTQoVTunsdBDw8rp4uoG5Lsy5"
+    r.ContractAddress = "did:bid:efspy6btdcuzP5BH2N899Ycti5Sd7n3z"
     res := bs.GetContractInfo(r)
     if res.ErrorCode != 0 {
-        t.Error(res.ErrorDesc)
+    t.Error(res.ErrorDesc)
     }
     
     dataByte, err := json.Marshal(res)
     if err != nil {
-        t.Error(err)
+    t.Error(err)
     }
-    
-    fmt.Println("res: ", string(dataByte))
+    resJson := string(dataByte)
+    resJson = strings.Replace(resJson, "\\u003c", "<", -1)
+    resJson = strings.Replace(resJson, "\\u003e", ">", -1)
+    resJson = strings.Replace(resJson, "\\u0026", "&", -1)
+    fmt.Println("res: ", resJson)
 ```
 
 ### 1.4.4 GetContractAddress

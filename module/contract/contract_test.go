@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/module/encryption/key"
 	"github.com/caict-4iot-dev/BIF-Core-SDK-Go/types/request"
+	"strings"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ const SDK_INSTANCE_URL = "http://test.bifcore.bitfactory.cn"
 func TestGetContractInfo(t *testing.T) {
 	bs := GetContractInstance(SDK_INSTANCE_URL)
 	var r request.BIFContractGetInfoRequest
-	r.ContractAddress = "did:bid:efWVypEKTQoVTunsdBDw8rp4uoG5Lsy5"
+	r.ContractAddress = "did:bid:efspy6btdcuzP5BH2N899Ycti5Sd7n3z"
 	res := bs.GetContractInfo(r)
 	if res.ErrorCode != 0 {
 		t.Error(res.ErrorDesc)
@@ -24,8 +25,11 @@ func TestGetContractInfo(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
-	fmt.Println("res: ", string(dataByte))
+	resJson := string(dataByte)
+	resJson = strings.Replace(resJson, "\\u003c", "<", -1)
+	resJson = strings.Replace(resJson, "\\u003e", ">", -1)
+	resJson = strings.Replace(resJson, "\\u0026", "&", -1)
+	fmt.Println("res: ", resJson)
 }
 
 func TestGetContractAddress(t *testing.T) {
