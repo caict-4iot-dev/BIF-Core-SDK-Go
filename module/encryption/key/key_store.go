@@ -9,6 +9,7 @@ import (
 	"io"
 	mrand "math/rand"
 	"strconv"
+	"strings"
 
 	"golang.org/x/crypto/scrypt"
 )
@@ -57,7 +58,7 @@ func GenerateKeyStore(encPrivateKey string, password string, n int, r int, p int
 	}
 	keyStore.Address = publicKeyManager.EncAddress
 	cypherText, aesctrIv := AESEncrypt(key, encPrivateKey)
-	keyStore.CypherText = cypherText
+	keyStore.CypherText = cypherText[len(aesctrIv):]
 	keyStore.AesctrIv = aesctrIv
 	var scryptParams ScryptParams
 	scryptParams.N = n
@@ -75,7 +76,13 @@ func DecipherKeyStore(keyStore KeyStore, password string) string {
 	if err != nil {
 		return ""
 	}
-	return AESDecrypt(key, keyStore.CypherText)
+	var cypher string
+	if strings.HasPrefix(keyStore.CypherText, keyStore.AesctrIv) {
+		cypher = keyStore.CypherText
+	} else {
+		cypher = keyStore.AesctrIv + keyStore.CypherText
+	}
+	return AESDecrypt(key, cypher)
 }
 
 func AESEncrypt(key []byte, text string) (string, string) {
