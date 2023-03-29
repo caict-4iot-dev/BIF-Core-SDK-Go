@@ -72,7 +72,8 @@ func GenerateKeyStore(encPrivateKey string, password string, n int, r int, p int
 }
 
 func DecipherKeyStore(keyStore KeyStore, password string) string {
-	key, err := scrypt.Key([]byte(password), []byte(keyStore.Salt), keyStore.N, keyStore.R, keyStore.P, keyStore.Version)
+	dkLen := 32
+	key, err := scrypt.Key([]byte(password), []byte(keyStore.Salt), keyStore.N, keyStore.R, keyStore.P, dkLen)
 	if err != nil {
 		return ""
 	}
